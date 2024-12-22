@@ -54,54 +54,7 @@
          - [x] 使用json数据文件
             - 记录关卡数据：怪物数据、炮塔数据、路径、可建造区域等，增强了数据的可读性和可修改性。
             - 记录存档，保存当前关卡数据
-* 代码亮点
-    - 异常捕获
-        ```cpp
-        try {
-            _currNum = document["currNum"].GetInt();
-            _goldValue = document["goldValue"].GetInt();
-            carrotHealth = document["carrotHealth"].GetInt();
-            _monsterDeath = document["monsterDeath"].GetInt();
-            _monsterNum = document["monsterNum"].GetInt();
-            // 获得关卡存档的怪物
-            ...
-        }
-        catch (const std::exception& e) {
-            CCLOG("Exception while processing monster data: %s", e.what());
-        }
-        ``` 
-    - json文件读写
-        ```cpp
-        // 读出
-        // rapidjson 对象
-        rapidjson::Document document;
-        // 根据传递的关卡值selectLevel获得对应的关卡数据文件
-        std::string filePath = FileUtils::getInstance()->fullPathForFilename(StringUtils::format("CarrotGuardRes/LeveL_%d.data", currentLevel));
-        // 读取文件内容
-        std::string contentStr = FileUtils::getInstance()->getStringFromFile(filePath);
-        // 解析contentStr中json数据，并存到document中
-        document.Parse<0>(contentStr.c_str());   
-        ```
-        ```cpp
-        // 写入
-        // 创建一个 rapidjson::StringBuffer 对象，用于存储 JSON 字符串
-        rapidjson::StringBuffer buffer;// StringBuffer 是一个可变的字符序列，可以像 std::string 一样使用
-        // 创建一个 rapidjson::Writer 对象，用于将 JSON 文档写入到 StringBuffer 中
-        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-        // 将 JSON 文档写入 StringBuffer 中
-        document.Accept(writer);// Accept() 接受一个 Document 对象，将其以 JSON 格式写入到 StringBuffer 中
-        gameMassageBuffer = buffer.GetString(); // 将 StringBuffer 中的字符输出到 std::string 中
-        cocos2d::FileUtils* fileUtils = cocos2d::FileUtils::getInstance();
-        std::string path = "Level_" + std::to_string(currentLevel) + "_save.json";
-        fileUtils->writeStringToFile(buffer.GetString(), fileUtils->getWritablePath() + path);
-        ``` 
-    - 多次使用宏调试
-        ```cpp
-        #define DEBUG
-        #ifdef DEBUG
-        CCLOG("screenWidth:  %lf, screenHeight:  %lf", _screenWidth, _screenHeight);
-        #endif // DEBUG
-        ``` 
+
 * 开发时遇到的问题
     - Tiled版本过高导致Tiled地图无法加载到cocos2dx-v4，需要降低Tiled版本
     - cocos2dx-v4中在Windows环境下加载csv编码的Tiled地图由BUG，通过修改cocos2dx引擎源码解决， 后来发现可以修改Tiled地图的编码格式。
@@ -112,45 +65,7 @@
 			currentString.erase(std::remove(currentString.begin(), currentString.end(), '\r'), currentString.end());
         #endif
         ``` 
-    - 使用多线程开启服务器时，在退出场景时需要关闭该线程。
-        ```cpp
-        void onExit() {
-            udpserver.Stop();
-            Layer::onExit();
-        }
-        ``` 
-    - Tiled地图坐标，cocos屏幕坐标，OpneGL坐标互相转换，及各个Node的位置大小调整  
-        ```cpp
-        // TMX point ->Screen
-        // 地图格子坐标转化成屏幕坐标
-        Vec2 TMXPosToLocation(Vec2 pos);
-        // Screen ->TMX point
-        // 屏幕坐标转化成地图格子坐标	
-        Vec2 LocationToTMXPos(Vec2 pos);
-        ```    
-    - 监听器管理十分重要，多个监听器共存会造成游戏执行逻辑混乱
-        ```cpp
-        //获取当前建造界面是否激活
-        int hasBuild = getHasBuild();
-        //如果没有激活建造界面
-        if (!hasBuild) {
-	        //创建新的触摸层和监听器
-	        createTouchLayer();
-	        createTouchListener();
-        }
-        ``` 
-* 加分项 
-    1. 在Github上部署完整项目，并且有详细的使用文档
-    2. 团队分工合理，项目开源至GitHub
-    3. 界面精美，接近还原游戏原作
-    4. 添加了音效和背景音乐，且均支持手动打开关闭
-    5. 项目目录结构清晰
-    6. 运行时无崩溃情况发生
-    7. 没有内存泄露问题
-    8. 实现暂停游戏功能
-    9. 实现游戏存档功能
-    10. 使用problemloading和try catch来处理异常
-
+ 
 
 
 ## 游戏文档
@@ -169,11 +84,7 @@
 * <img src="MDres\4.png" width = "300" height = "200" alt="" align=center />
 * <img src="MDres\6.png" width = "300" height = "200" alt="" align=center />
 
-### 再一点说明
-1. CarrotGuard 萝卜升级表现为点击时，会使用金币回血
-2. CarrotGuard_network 实现了联网的观战模式，通过UDP传送可以实时观看正在运行的关卡，但是不能进行操作，有轻微bug，建议在有程序进行游戏时关卡使用
-3. 使用Enigma Virtual Box 打包成单个exe时，声音有问题，只能使用这种动态库方法
-4. 改了点cocos2dx源码内容，具体见GitHub的commit
+
 
 
 
