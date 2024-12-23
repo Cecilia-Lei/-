@@ -1156,11 +1156,8 @@ void GameScene::generateMonsters() {
 
 }
 
-// 调好了hhh,注意mutable在lambda的使用，及from++，注意每次调用的话lambda中的from都会在上一次基础上++，而不是固定的from+1，
-// 同时外部的from不变，注意这个语法点，
 void GameScene::generateMonsterWave() {
 
-	//_monsterNum;
 	if (_currNum > _monsterWave) {
 
 		return;
@@ -1225,7 +1222,6 @@ Vector<Monster*>& GameScene::getMonsters() {
 
 void GameScene::update(float dt)
 {
-	// **************别动这个顺序***************
 	// 更新怪物
 	updateMonster();
 	// 更新存档
@@ -1346,10 +1342,6 @@ void GameScene::SaveGame()
 		}
 	}
 	document.AddMember("TurretMap", TurretMap, document.GetAllocator());
-	//****************************
-	// 有bug 内存访问错误，但是复现不出来了
-	// 
-	//****************************
 
 	rapidjson::Value bullets(rapidjson::kArrayType);
 	// 获取当前场景中的所有子节点
