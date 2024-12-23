@@ -101,18 +101,18 @@ void GameScene::LoadLevelData()
 	document.Parse<0>(contentStr.c_str());
 
 	//***************获取文件内容********************
-	// 1. 读取地图文件
+	// 读取地图文件
 	_tileFile = document["tileFile"].GetString();
-	// 2. 怪物总数
+	// 怪物总数
 	_monsterAll = document["monsterAll"].GetInt();
-	// 3. 怪物波数
+	// 怪物波数
 	_monsterWave = document["monsterWave"].GetInt();
-	// 4.每波怪物数量
+	// 每波怪物数量
 	const rapidjson::Value& waveArray = document["everyWave"];
 	for (int i = 0; i < waveArray.Size(); i++) {
 		_everyWave.push_back(waveArray[i].GetInt());
 	}
-	// 5. 获得关卡设定的怪物
+	// 获得关卡设定的怪物
 	const rapidjson::Value& monsterArray = document["monsters"];
 	for (int i = 0; i < monsterArray.Size(); i++) {
 		// 获得每一个怪物数据
@@ -129,7 +129,7 @@ void GameScene::LoadLevelData()
 		// 将其传到关卡怪物集合中
 		_monsterDatas.pushBack(monsterData);
 	}
-	// 6. 获得关卡设定的炮塔
+	// 获得关卡设定的炮塔
 	const rapidjson::Value& turretArray = document["turrets"];
 	for (int i = 0; i < turretArray.Size(); i++) {
 		// 获取炮塔数据
@@ -150,16 +150,11 @@ void GameScene::LoadLevelData()
 		// 传到关卡塔集
 		_turretDatas.pushBack(turretData);
 	}
-	// 7. 怪物经过的路径
-	// 
+	// 怪物经过的路径
+	
 	// 因为路径坐标计算需要先加载地图，只能把它放前边了
 	// 调用TMXTiledMap 读取瓦片地图
 	_tileMap = TMXTiledMap::create(_tileFile);
-	//********************************************************************
-	//Fix incorrect rendering of tilemaps with csv data on windows
-	// https://github.com/cocos2d/cocos2d-x/pull/20483/files
-	// 解决windows下加载地图问题！！！！！！！！
-	//********************************************************************
 
 	// 设置场景容器的大小为窗口大小
 	//this->setContentSize(size);
@@ -195,7 +190,7 @@ void GameScene::LoadLevelData()
 }
 
 
-// *******************************************鼠标点击建塔
+// 鼠标点击建塔
 void GameScene::onMouseDown(EventMouse* event)
 {
 	// 获取鼠标点击的坐标
@@ -660,8 +655,6 @@ void GameScene::initLevel()
 	spriteFrameCache->addSpriteFramesWithFile("CarrotGuardRes/Health.plist");
 	spriteFrameCache->addSpriteFramesWithFile("CarrotGuardRes/BaseFunc.plist");
 
-
-
 	// 获取障碍层，设置障碍层隐藏
 	_collidable = _tileMap->getLayer("collidable");
 	_collidable->setVisible(true);
@@ -681,8 +674,6 @@ void GameScene::initLevel()
 		}
 	}
 
-
-
 	// 获得Carrot 对象
 	auto carrotObject = _tileMap->getObjectGroup("carrotObject");
 
@@ -696,8 +687,6 @@ void GameScene::initLevel()
 	_carrot->setPosition(carrotX, carrotY);
 	_carrot->setName("carrot"); // 设个名字
 	_tileMap->addChild(_carrot, 2);
-
-
 }
 
 
@@ -705,7 +694,6 @@ void GameScene::TopLabel()
 
 {
 	// 注意屏幕数据的父节点应该是scece ，而不是瓦片地图，因为瓦片地图进行了缩放，
-	// 如果是瓦片地图的子节点基于屏幕的setposition 会进行缩放，被挤出屏幕！！！！
 	// 1. 显示出现了多少波怪物
 	_curNumberLabel = Label::createWithSystemFont(StringUtils::format("%d", std::min(_currNum, _monsterWave)), "Arial", 32);
 	_curNumberLabel->setColor(Color3B::YELLOW);
