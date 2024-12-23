@@ -9,24 +9,24 @@
 using namespace ui;
 USING_NS_CC;
 
-static int currentLevel = 0;  // µ±Ç°¹Ø¿¨
-static int  IS_LOAD_SAVE_GAME = 1; // ÊÇ·ñ¼ÓÔØ´æµµ
+static int currentLevel = 0;  // å½“å‰å…³å¡
+static int  IS_LOAD_SAVE_GAME = 1; // æ˜¯å¦åŠ è½½å­˜æ¡£
 
 #define DEBUG
 
-// ¸ù¾İ¹Ø¿¨±àºÅ´´½¨ÓÎÏ·¹Ø¿¨³¡¾°
+// æ ¹æ®å…³å¡ç¼–å·åˆ›å»ºæ¸¸æˆå…³å¡åœºæ™¯
 Scene* GameScene::createSceneWithLevel(int selectLevel, int isSave)
-{   // »ñµÃ¹Ø¿¨±àºÅ
+{   // è·å¾—å…³å¡ç¼–å·
 	currentLevel = selectLevel;
 	IS_LOAD_SAVE_GAME = isSave;
 	auto scene = Scene::create();
 
 	auto layer = GameScene::create();
-	layer->setName("layer"); // Éè¸öÃû×Ö
+	layer->setName("layer"); // è®¾ä¸ªåå­—
 	scene->addChild(layer);
 	return scene;
 }
-// ¹Ø¿¨³¡¾°³õÊ¼»¯
+// å…³å¡åœºæ™¯åˆå§‹åŒ–
 bool GameScene::init()
 {
 
@@ -40,7 +40,7 @@ bool GameScene::init()
 	if (!Layer::init()) {
 		return false;
 	}
-	// »ñÈ¡ÆÁÄ»¿í¸ß
+	// è·å–å±å¹•å®½é«˜
 	screenSize = Director::getInstance()->getVisibleSize();
 	_screenWidth = screenSize.width;
 	_screenHeight = screenSize.height;
@@ -48,24 +48,24 @@ bool GameScene::init()
 	CCLOG("screenWidth:  %lf, screenHeight:  %lf", _screenWidth, _screenHeight);
 #endif // DEBUG
 
-	// ¶ÁÈ¡¹Ø¿¨Êı¾İ 
+	// è¯»å–å…³å¡æ•°æ® 
 	LoadLevelData();
-	// ½øĞĞ¹Ø¿¨³õÊ¼»¯
+	// è¿›è¡Œå…³å¡åˆå§‹åŒ–
 	initLevel();
-	// ¶ÁÈ¡´æµµ
+	// è¯»å–å­˜æ¡£
 	if (IS_LOAD_SAVE_GAME) {
 		LoadSaveGame();
 	}
-	// ÉèÖÃÆÁÄ»Êı¾İ
+	// è®¾ç½®å±å¹•æ•°æ®
 	TopLabel();
-	// ¿ªÊ¼ÓÎÏ·Ê±£¬µ¹¼ÆÊ±
+	// å¼€å§‹æ¸¸æˆæ—¶ï¼Œå€’è®¡æ—¶
 	CountDown();
-	// ¼ÓÔØ´æµµ
+	// åŠ è½½å­˜æ¡£
 	if (IS_LOAD_SAVE_GAME) {
 		initSaveGame();
 	}
 
-	// ´´ÔìÊó±êµã»÷Ê±¼ä£¬ÓÃÓÚ½¨Ëş
+	// åˆ›é€ é¼ æ ‡ç‚¹å‡»æ—¶é—´ï¼Œç”¨äºå»ºå¡”
 	auto listener = EventListenerMouse::create();
 	//listener->onMouseDown = CC_CALLBACK_1(GameScene::onClicked, this);
 	listener->onMouseDown = CC_CALLBACK_1(GameScene::onMouseDown, this);
@@ -73,7 +73,7 @@ bool GameScene::init()
 
 
 
-	//³õÊ¼»¯½¨ÔìËşºÍÉı¼¶ËşµÄµã»÷ÊÂ¼ş
+	//åˆå§‹åŒ–å»ºé€ å¡”å’Œå‡çº§å¡”çš„ç‚¹å‡»äº‹ä»¶
 	setBuildEvent(NULL);
 	setHasBuild(0);
 	setHasUpgrade(0);
@@ -81,65 +81,65 @@ bool GameScene::init()
 	setTouchLayer(NULL);
 	createTouchListener();
 	setTouchListener(NULL);
-	//³õÊ¼»¯×îºóÒ»²¨µÄ±ê¼Ç
+	//åˆå§‹åŒ–æœ€åä¸€æ³¢çš„æ ‡è®°
 	setIsFinalWave(0);
 	return true;
 }
 void GameScene::LoadLevelData()
 {
-	// rapidjson ¶ÔÏó
+	// rapidjson å¯¹è±¡
 	rapidjson::Document document;
 
-	// ¸ù¾İ´«µİµÄ¹Ø¿¨ÖµselectLevel»ñµÃ¶ÔÓ¦µÄ¹Ø¿¨Êı¾İÎÄ¼ş
+	// æ ¹æ®ä¼ é€’çš„å…³å¡å€¼selectLevelè·å¾—å¯¹åº”çš„å…³å¡æ•°æ®æ–‡ä»¶
 	std::string filePath = FileUtils::getInstance()->
 		fullPathForFilename(StringUtils::format("CarrotGuardRes/LeveL_%d.data", currentLevel));
 
-	// ¶ÁÈ¡ÎÄ¼şÄÚÈİ
+	// è¯»å–æ–‡ä»¶å†…å®¹
 	std::string contentStr = FileUtils::getInstance()->getStringFromFile(filePath);
 
-	// ½âÎöcontentStrÖĞjsonÊı¾İ£¬²¢´æµ½documentÖĞ
+	// è§£æcontentSträ¸­jsonæ•°æ®ï¼Œå¹¶å­˜åˆ°documentä¸­
 	document.Parse<0>(contentStr.c_str());
 
-	//***************»ñÈ¡ÎÄ¼şÄÚÈİ********************
-	// 1. ¶ÁÈ¡µØÍ¼ÎÄ¼ş
+	//***************è·å–æ–‡ä»¶å†…å®¹********************
+	// 1. è¯»å–åœ°å›¾æ–‡ä»¶
 	_tileFile = document["tileFile"].GetString();
-	// 2. ¹ÖÎï×ÜÊı
+	// 2. æ€ªç‰©æ€»æ•°
 	_monsterAll = document["monsterAll"].GetInt();
-	// 3. ¹ÖÎï²¨Êı
+	// 3. æ€ªç‰©æ³¢æ•°
 	_monsterWave = document["monsterWave"].GetInt();
-	// 4.Ã¿²¨¹ÖÎïÊıÁ¿
+	// 4.æ¯æ³¢æ€ªç‰©æ•°é‡
 	const rapidjson::Value& waveArray = document["everyWave"];
 	for (int i = 0; i < waveArray.Size(); i++) {
 		_everyWave.push_back(waveArray[i].GetInt());
 	}
-	// 5. »ñµÃ¹Ø¿¨Éè¶¨µÄ¹ÖÎï
+	// 5. è·å¾—å…³å¡è®¾å®šçš„æ€ªç‰©
 	const rapidjson::Value& monsterArray = document["monsters"];
 	for (int i = 0; i < monsterArray.Size(); i++) {
-		// »ñµÃÃ¿Ò»¸ö¹ÖÎïÊı¾İ
+		// è·å¾—æ¯ä¸€ä¸ªæ€ªç‰©æ•°æ®
 		std::string name = monsterArray[i]["name"].GetString();
 		int lifeValue = monsterArray[i]["lifeValue"].GetInt();
 		int gold = monsterArray[i]["gold"].GetInt();
 		float speed = monsterArray[i]["speed"].GetFloat();
-		// ½«Êı¾İ´«µ½MonsterData¶ÔÏóÖĞ
+		// å°†æ•°æ®ä¼ åˆ°MonsterDataå¯¹è±¡ä¸­
 		auto monsterData = MonsterData::create();
 		monsterData->setName(name);
 		monsterData->setLifeValue(lifeValue);
 		monsterData->setGold(gold);
 		monsterData->setSpeed(speed);
-		// ½«Æä´«µ½¹Ø¿¨¹ÖÎï¼¯ºÏÖĞ
+		// å°†å…¶ä¼ åˆ°å…³å¡æ€ªç‰©é›†åˆä¸­
 		_monsterDatas.pushBack(monsterData);
 	}
-	// 6. »ñµÃ¹Ø¿¨Éè¶¨µÄÅÚËş
+	// 6. è·å¾—å…³å¡è®¾å®šçš„ç‚®å¡”
 	const rapidjson::Value& turretArray = document["turrets"];
 	for (int i = 0; i < turretArray.Size(); i++) {
-		// »ñÈ¡ÅÚËşÊı¾İ
+		// è·å–ç‚®å¡”æ•°æ®
 		std::string name = turretArray[i]["name"].GetString();
 		int cost1 = turretArray[i]["Cost1"].GetInt();
 		int cost2 = turretArray[i]["Cost2"].GetInt();
 		int cost3 = turretArray[i]["Cost3"].GetInt();
 		float range = turretArray[i]["range"].GetFloat();
 		int damage = turretArray[i]["damage"].GetInt();
-		// ´«µ½turretdata
+		// ä¼ åˆ°turretdata
 		auto turretData = TurretData::create();
 		turretData->setName(name);
 		turretData->setCost1(cost1);
@@ -147,116 +147,116 @@ void GameScene::LoadLevelData()
 		turretData->setCost3(cost3);
 		turretData->setRange(range);
 		turretData->setDamage(damage);
-		// ´«µ½¹Ø¿¨Ëş¼¯
+		// ä¼ åˆ°å…³å¡å¡”é›†
 		_turretDatas.pushBack(turretData);
 	}
-	// 7. ¹ÖÎï¾­¹ıµÄÂ·¾¶
+	// 7. æ€ªç‰©ç»è¿‡çš„è·¯å¾„
 	// 
-	// ÒòÎªÂ·¾¶×ø±ê¼ÆËãĞèÒªÏÈ¼ÓÔØµØÍ¼£¬Ö»ÄÜ°ÑËü·ÅÇ°±ßÁË
-	// µ÷ÓÃTMXTiledMap ¶ÁÈ¡ÍßÆ¬µØÍ¼
+	// å› ä¸ºè·¯å¾„åæ ‡è®¡ç®—éœ€è¦å…ˆåŠ è½½åœ°å›¾ï¼Œåªèƒ½æŠŠå®ƒæ”¾å‰è¾¹äº†
+	// è°ƒç”¨TMXTiledMap è¯»å–ç“¦ç‰‡åœ°å›¾
 	_tileMap = TMXTiledMap::create(_tileFile);
 	//********************************************************************
 	//Fix incorrect rendering of tilemaps with csv data on windows
 	// https://github.com/cocos2d/cocos2d-x/pull/20483/files
-	// ½â¾öwindowsÏÂ¼ÓÔØµØÍ¼ÎÊÌâ£¡£¡£¡£¡£¡£¡£¡£¡
+	// è§£å†³windowsä¸‹åŠ è½½åœ°å›¾é—®é¢˜ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼
 	//********************************************************************
 
-	// ÉèÖÃ³¡¾°ÈİÆ÷µÄ´óĞ¡Îª´°¿Ú´óĞ¡
+	// è®¾ç½®åœºæ™¯å®¹å™¨çš„å¤§å°ä¸ºçª—å£å¤§å°
 	//this->setContentSize(size);
-	// Ëõ·ÅÍßÆ¬µØÍ¼£¬Ê¹ÆäÌîÂúÕû¸öÆÁÄ»
+	// ç¼©æ”¾ç“¦ç‰‡åœ°å›¾ï¼Œä½¿å…¶å¡«æ»¡æ•´ä¸ªå±å¹•
 	_tileMap->setScaleX(screenSize.width / _tileMap->getContentSize().width);
 	_tileMap->setScaleY(screenSize.height / _tileMap->getContentSize().height);
-	// °ÑµØÍ¼ÃªµãºÍÎ»ÖÃ¶¼ÉèÖÃÎªÔ­µã£¬Ê¹µØÍ¼×óÏÂ½ÇÓëÆÁÄ»×óÏÂ½Ç¶ÔÆë
+	// æŠŠåœ°å›¾é”šç‚¹å’Œä½ç½®éƒ½è®¾ç½®ä¸ºåŸç‚¹ï¼Œä½¿åœ°å›¾å·¦ä¸‹è§’ä¸å±å¹•å·¦ä¸‹è§’å¯¹é½
 	_tileMap->setAnchorPoint(Vec2::ZERO);
 	_tileMap->setPosition(Vec2::ZERO);
-	_tileMap->setName("_tileMap"); // Éè¸öÃû×Ö
+	_tileMap->setName("_tileMap"); // è®¾ä¸ªåå­—
 	this->addChild(_tileMap, 1);
 
 	//**************************************************************
 	const rapidjson::Value& pathtArray = document["path"];
 	for (int i = 0; i < pathtArray.Size(); i++) {
-		// 1. »ñÈ¡Ã¿¸ö¹ÖÎï¾­¹ıµÄÂ·¾¶x,y
+		// 1. è·å–æ¯ä¸ªæ€ªç‰©ç»è¿‡çš„è·¯å¾„x,y
 		int x = pathtArray[i]["x"].GetInt();
 		int y = pathtArray[i]["y"].GetInt();
-		// ´´½¨µØÍ¼×ø±ê
+		// åˆ›å»ºåœ°å›¾åæ ‡
 		Vec2 tilePoint = Vec2(x, y);
-		// ½«µØÍ¼×ø±ê×ª»¯³ÉÆÁÄ»×ø±ê
+		// å°†åœ°å›¾åæ ‡è½¬åŒ–æˆå±å¹•åæ ‡
 		Vec2 locationPoint = TMXPosToLocation(tilePoint);
 
 		setCarrotTag(1000 * x + y);
 
-		// Point²»ÄÜ¼Ì³ĞRef£¬Vector²»ÄÜ´æ´¢
+		// Pointä¸èƒ½ç»§æ‰¿Refï¼ŒVectorä¸èƒ½å­˜å‚¨
 		auto pointDelegate = PointDelegate::create(locationPoint.x, locationPoint.y);
 
-		// ½«Ã¿¸ö×ø±ê´æµ½Â·¾¶¼¯ºÏÖĞ
+		// å°†æ¯ä¸ªåæ ‡å­˜åˆ°è·¯å¾„é›†åˆä¸­
 		_pathPoints.pushBack(pointDelegate);
 	}
 
 }
 
 
-// *******************************************Êó±êµã»÷½¨Ëş
+// *******************************************é¼ æ ‡ç‚¹å‡»å»ºå¡”
 void GameScene::onMouseDown(EventMouse* event)
 {
-	// »ñÈ¡Êó±êµã»÷µÄ×ø±ê
+	// è·å–é¼ æ ‡ç‚¹å‡»çš„åæ ‡
 	Vec2 clickPos = event->getLocation();
-	//½«OpenGL×ø±êÏµ×ª»»ÎªÆÁÄ»×ø±êÏµ
+	//å°†OpenGLåæ ‡ç³»è½¬æ¢ä¸ºå±å¹•åæ ‡ç³»
 	Vec2 screenPos = Director::getInstance()->convertToUI(clickPos);
-	// ×¢ÒâÁ½¸ö×ø±êÎ»ÖÃ
-	// Êó±êµã»÷µÄÊÇOpenGL×ø±êÏµ£¬×óÉÏ½Ç0£¬0£¬ÆÁÄ»×ø±ê×óÏÂ½Ç0,0
+	// æ³¨æ„ä¸¤ä¸ªåæ ‡ä½ç½®
+	// é¼ æ ‡ç‚¹å‡»çš„æ˜¯OpenGLåæ ‡ç³»ï¼Œå·¦ä¸Šè§’0ï¼Œ0ï¼Œå±å¹•åæ ‡å·¦ä¸‹è§’0,0
 	Vec2 mapPos = LocationToTMXPos(screenPos);
-	// ×ª»¯³ÉTMXµØÍ¼×ø±ê
+	// è½¬åŒ–æˆTMXåœ°å›¾åæ ‡
 	int mapX = (int)(mapPos.x), mapY = (int)(mapPos.y);
 
-	//»ñÈ¡µ±Ç°½¨Ôì½çÃæÊÇ·ñ¼¤»î
+	//è·å–å½“å‰å»ºé€ ç•Œé¢æ˜¯å¦æ¿€æ´»
 	int hasBuild = getHasBuild();
-	//»ñÈ¡µ±Ç°Éı¼¶½çÃæÊÇ·ñ¼¤»î
+	//è·å–å½“å‰å‡çº§ç•Œé¢æ˜¯å¦æ¿€æ´»
 	int hasUpgrade = getHasUpgrade();
 
-	// µØÍ¼ÉÏ¿ÉÒÔ½¨ÔìÊ±
+	// åœ°å›¾ä¸Šå¯ä»¥å»ºé€ æ—¶
 	if (isTurretAble[mapX][mapY] == 0) {
-		if (!hasUpgrade)//ÕâÑù·ÀÖ¹ÔÚÉı¼¶ËşµÄÊ±ºòÎó´¥ÅÔ±ßµÄ¿ÕµØ
+		if (!hasUpgrade)//è¿™æ ·é˜²æ­¢åœ¨å‡çº§å¡”çš„æ—¶å€™è¯¯è§¦æ—è¾¹çš„ç©ºåœ°
 			TouchLand(event);
 	}
 	else if (isTurretAble[mapX][mapY] != 0 && isTurretAble[mapX][mapY] != 1) {
-		if (!hasBuild)//ÕâÑù·ÀÖ¹ÔÚ½¨ÔìËşµÄÊ±ºòÎó´¥ÅÔ±ßµÄËş
+		if (!hasBuild)//è¿™æ ·é˜²æ­¢åœ¨å»ºé€ å¡”çš„æ—¶å€™è¯¯è§¦æ—è¾¹çš„å¡”
 			TouchTower(event);
 	}
 }
 
 void GameScene::TouchLand(EventMouse* event) {
 
-	// »ñÈ¡Êó±êµã»÷µÄ×ø±ê
+	// è·å–é¼ æ ‡ç‚¹å‡»çš„åæ ‡
 	Vec2 clickPos = event->getLocation();
-	//½«OpenGL×ø±êÏµ×ª»»ÎªÆÁÄ»×ø±êÏµ
+	//å°†OpenGLåæ ‡ç³»è½¬æ¢ä¸ºå±å¹•åæ ‡ç³»
 	Vec2 screenPos = Director::getInstance()->convertToUI(clickPos);
-	// ×¢ÒâÁ½¸ö×ø±êÎ»ÖÃ
-	// Êó±êµã»÷µÄÊÇOpenGL×ø±êÏµ£¬×óÉÏ½Ç0£¬0£¬ÆÁÄ»×ø±ê×óÏÂ½Ç0,0
+	// æ³¨æ„ä¸¤ä¸ªåæ ‡ä½ç½®
+	// é¼ æ ‡ç‚¹å‡»çš„æ˜¯OpenGLåæ ‡ç³»ï¼Œå·¦ä¸Šè§’0ï¼Œ0ï¼Œå±å¹•åæ ‡å·¦ä¸‹è§’0,0
 	Vec2 mapPos = LocationToTMXPos(screenPos);
-	// ×ª»¯³ÉTMXµØÍ¼×ø±ê
+	// è½¬åŒ–æˆTMXåœ°å›¾åæ ‡
 	int mapX = (int)(mapPos.x), mapY = (int)(mapPos.y);
-	// µØÍ¼ÉÏ¿ÉÒÔ½¨ÔìÊ±
+	// åœ°å›¾ä¸Šå¯ä»¥å»ºé€ æ—¶
 
 
-	//»ñÈ¡µ±Ç°½¨Ôì½çÃæÊÇ·ñ¼¤»î
+	//è·å–å½“å‰å»ºé€ ç•Œé¢æ˜¯å¦æ¿€æ´»
 	int hasBuild = getHasBuild();
 
-	//Èç¹ûÃ»ÓĞ¼¤»î½¨Ôì½çÃæ
+	//å¦‚æœæ²¡æœ‰æ¿€æ´»å»ºé€ ç•Œé¢
 	if (!hasBuild) {
-		//´´½¨ĞÂµÄ´¥Ãş²ãºÍ¼àÌıÆ÷
+		//åˆ›å»ºæ–°çš„è§¦æ‘¸å±‚å’Œç›‘å¬å™¨
 		createTouchLayer();
 		createTouchListener();
 	}
-	//»ñÈ¡ĞÂµÄ´¥Ãş²ãºÍ¼àÌıÆ÷
+	//è·å–æ–°çš„è§¦æ‘¸å±‚å’Œç›‘å¬å™¨
 	auto touch_layer = getTouchLayer();
 	auto touch_listener = getTouchListener();
 
-	//½«ĞÂµÄ´¥Ãş²ãÌí¼Óµ½³¡¾°µ±ÖĞ
+	//å°†æ–°çš„è§¦æ‘¸å±‚æ·»åŠ åˆ°åœºæ™¯å½“ä¸­
 	if (!hasBuild)
 		this->addChild(touch_layer, 10);
 
 
-	//´´½¨½¨ÔìÍ¼±ê¾«Áé
+	//åˆ›å»ºå»ºé€ å›¾æ ‡ç²¾çµ
 	Sprite* TB_Can = Sprite::create("CarrotGuardRes/Towers/TBottle/CanBuy.png");
 	Sprite* TFan_Can = Sprite::create("CarrotGuardRes/Towers/TFan/TFan_CanBuy.png");
 	Sprite* TSun_Can = Sprite::create("CarrotGuardRes/Towers/TSun/TSun_CanBuy.png");
@@ -264,15 +264,15 @@ void GameScene::TouchLand(EventMouse* event) {
 	Sprite* TFan_Not = Sprite::create("CarrotGuardRes/Towers/TFan/TFan_NotBuy.png");
 	Sprite* TSun_Not = Sprite::create("CarrotGuardRes/Towers/TSun/TSun_NotBuy.png");
 
-	//¶¨ÒåÈıÖÖ·ÀÓùËşµÄ½¨Ôì³É±¾
+	//å®šä¹‰ä¸‰ç§é˜²å¾¡å¡”çš„å»ºé€ æˆæœ¬
 	int TB_Cost{}, TFan_Cost{}, TSun_Cost{};
 
 	if (!hasBuild) {
-		//ÓÉµØÍ¼×ø±êÔÙ×ª»¯ÎªÆÁÄ»×ø±ê£¬±£Ö¤Í¬Ò»µØÍ¼×ø±ê½¨ÔìÊ±ÆÁÄ»×ø±êÏàÍ¬
+		//ç”±åœ°å›¾åæ ‡å†è½¬åŒ–ä¸ºå±å¹•åæ ‡ï¼Œä¿è¯åŒä¸€åœ°å›¾åæ ‡å»ºé€ æ—¶å±å¹•åæ ‡ç›¸åŒ
 		screenPos = TMXPosToLocation(mapPos);
-		//¶¨ÒåÔÚµü´úÆ÷ÖĞµÄ¼ÆÊı±êÇ©
+		//å®šä¹‰åœ¨è¿­ä»£å™¨ä¸­çš„è®¡æ•°æ ‡ç­¾
 		int count = 1;
-		//±éÀú»ñµÃÃ¿Ò»¸ö·ÀÓùËşµÄ½¨Ôì³É±¾
+		//éå†è·å¾—æ¯ä¸€ä¸ªé˜²å¾¡å¡”çš„å»ºé€ æˆæœ¬
 		for (const auto& turretData : _turretDatas) {
 			switch (count) {
 			case 1:
@@ -290,7 +290,7 @@ void GameScene::TouchLand(EventMouse* event) {
 			count++;
 		}
 
-		//¸ù¾İµ±Ç°µÄ½ğ±ÒÇé¿öÀ´ÉèÖÃ½¨Ôì·ÀÓùËşµÄÍ¼±ê
+		//æ ¹æ®å½“å‰çš„é‡‘å¸æƒ…å†µæ¥è®¾ç½®å»ºé€ é˜²å¾¡å¡”çš„å›¾æ ‡
 		if (_goldValue >= TB_Cost) {
 			TB_Can->setPosition(screenPos.x - _screenWidth * 0.05, screenPos.y);
 			TB_Can->setVisible(true);
@@ -330,41 +330,41 @@ void GameScene::TouchLand(EventMouse* event) {
 
 	}
 
-	//¶¨Òå·ÀÓùËş×îÖÕÏÔÊ¾Í¼±êµÄ¾«Áé
+	//å®šä¹‰é˜²å¾¡å¡”æœ€ç»ˆæ˜¾ç¤ºå›¾æ ‡çš„ç²¾çµ
 	Sprite* TB, * TFan, * TSun;
-	//Í¨¹ıname»ñÈ¡¡°¿ÉÒÔ½¨Ôì¡±µÄÍ¼±ê£¬Èç¹û²»ÄÜ»ñÈ¡£¬ÔòËµÃ÷"²»¿É½¨Ôì¡±
+	//é€šè¿‡nameè·å–â€œå¯ä»¥å»ºé€ â€çš„å›¾æ ‡ï¼Œå¦‚æœä¸èƒ½è·å–ï¼Œåˆ™è¯´æ˜"ä¸å¯å»ºé€ â€
 	TB = (Sprite*)touch_layer->getChildByName("TB_Can");
 	TFan = (Sprite*)touch_layer->getChildByName("TFan_Can");
 	TSun = (Sprite*)touch_layer->getChildByName("TSun_Can");
 
-	//¼ÇÂ¼µ±Ç°µã»÷ÊÂ¼ş£¬¿ÉÒÔÓÃÓÚºóĞø»ñµÃ·ÀÓùËş½¨ÔìµÄÎ»ÖÃ
+	//è®°å½•å½“å‰ç‚¹å‡»äº‹ä»¶ï¼Œå¯ä»¥ç”¨äºåç»­è·å¾—é˜²å¾¡å¡”å»ºé€ çš„ä½ç½®
 	if (!hasBuild) {
 		EventMouse* temp = new EventMouse(*event);
 		setBuildEvent(temp);
 	}
-	//¸üĞÂ½¨Ôì×´Ì¬£¬ËµÃ÷µ±Ç°ÒÑ¼¤»î½¨Ôì½çÃæ
+	//æ›´æ–°å»ºé€ çŠ¶æ€ï¼Œè¯´æ˜å½“å‰å·²æ¿€æ´»å»ºé€ ç•Œé¢
 	setHasBuild(1);
-	//»ñÈ¡·ÀÓùËş½¨ÔìÎ»ÖÃ¶ÔÓ¦µÄµã»÷ÊÂ¼ş
+	//è·å–é˜²å¾¡å¡”å»ºé€ ä½ç½®å¯¹åº”çš„ç‚¹å‡»äº‹ä»¶
 	EventMouse* buildTower = getBuildEvent();
-	//µ±µã»÷Êó±ê´¥·¢µÄµã»÷ÊÂ¼ş
+	//å½“ç‚¹å‡»é¼ æ ‡è§¦å‘çš„ç‚¹å‡»äº‹ä»¶
 	touch_listener->onMouseDown = [this, TB, TFan, TSun, &screenPos, mapPos, touch_layer, touch_listener, buildTower](EventMouse* event) {
 
-		//¼ÇÂ¼µã»÷µÄ×ø±ê
+		//è®°å½•ç‚¹å‡»çš„åæ ‡
 		Vec2 clickPos = event->getLocation();
-		//½«µã»÷µÄ×ø±ê×ª»¯ÎªUI×ø±ê
+		//å°†ç‚¹å‡»çš„åæ ‡è½¬åŒ–ä¸ºUIåæ ‡
 		Vec2 screenPos = Director::getInstance()->convertToUI(clickPos);
 
-		//ÔÚÕâÀïTBÖ¸´ú¡°¿ÉÒÔ½¨ÔìÍ¼±ê¡±Èç¹û²»´æÔÚ£¬¾ÍËµÃ÷²»¿ÉÒÔ½¨Ôì£¬Îª¼Ù¡£Èç¹û´æÔÚ£¬ÇÒµã»÷µ½¸ÃÍ¼±êµÄ·¶Î§ÄÚÔòÎªÕæ¡£
+		//åœ¨è¿™é‡ŒTBæŒ‡ä»£â€œå¯ä»¥å»ºé€ å›¾æ ‡â€å¦‚æœä¸å­˜åœ¨ï¼Œå°±è¯´æ˜ä¸å¯ä»¥å»ºé€ ï¼Œä¸ºå‡ã€‚å¦‚æœå­˜åœ¨ï¼Œä¸”ç‚¹å‡»åˆ°è¯¥å›¾æ ‡çš„èŒƒå›´å†…åˆ™ä¸ºçœŸã€‚
 		if ((TB) && TB->getBoundingBox().containsPoint(screenPos)) {
-			//½¨Ôì¶ÔÓ¦µÄ·ÀÓùËş
+			//å»ºé€ å¯¹åº”çš„é˜²å¾¡å¡”
 			BuildTower(buildTower, 1);
-			//ÒÆ³ı×îºóÉèÖÃµÄlisenner£¬·ÀÖ¹¶à¸ölisennerÏà»¥¸ÉÈÅ
+			//ç§»é™¤æœ€åè®¾ç½®çš„lisennerï¼Œé˜²æ­¢å¤šä¸ªlisennerç›¸äº’å¹²æ‰°
 			_eventDispatcher->removeEventListener(touch_listener);
-			//´Ó³¡¾°ÖĞÒÆ³ı´¥Ãş²ã
+			//ä»åœºæ™¯ä¸­ç§»é™¤è§¦æ‘¸å±‚
 			this->removeChild(touch_layer);
-			//³¹µ×ÒÆ³ı´¥Ãş²ã
+			//å½»åº•ç§»é™¤è§¦æ‘¸å±‚
 			removeTouchLayer();
-			//ÒÆ³ı´¥Ãş¼àÌıÆ÷
+			//ç§»é™¤è§¦æ‘¸ç›‘å¬å™¨
 			removeTouchListener();
 		}
 		else if ((TSun) && TSun->getBoundingBox().containsPoint(screenPos)) {
@@ -381,14 +381,14 @@ void GameScene::TouchLand(EventMouse* event) {
 			removeTouchLayer();
 			removeTouchListener();
 		}
-		//Èç¹ûµã»÷µ½Èı¸ö¡°¿ÉÒÔ½¨Ôì¡±Í¼±êÖ®ÍâµÄµØ·½£¬ÔòÏú»Ù½¨Ôì½çÃæ
+		//å¦‚æœç‚¹å‡»åˆ°ä¸‰ä¸ªâ€œå¯ä»¥å»ºé€ â€å›¾æ ‡ä¹‹å¤–çš„åœ°æ–¹ï¼Œåˆ™é”€æ¯å»ºé€ ç•Œé¢
 		else {
 			_eventDispatcher->removeEventListener(touch_listener);
 			this->removeChild(touch_layer);
 			removeTouchLayer();
 			removeTouchListener();
 		}
-		//±íÊ¾½¨Ôì½çÃæÒÑÏú»Ù
+		//è¡¨ç¤ºå»ºé€ ç•Œé¢å·²é”€æ¯
 		setHasBuild(0);
 		};
 	if (!hasBuild)
@@ -398,24 +398,24 @@ void GameScene::TouchLand(EventMouse* event) {
 
 void GameScene::BuildTower(EventMouse* event, int numTower) {
 	MusicManager::getInstance()->buildSound();
-	// »ñÈ¡Êó±êµã»÷µÄ×ø±ê
+	// è·å–é¼ æ ‡ç‚¹å‡»çš„åæ ‡
 	Vec2 clickPos = event->getLocation();
-	//½«OpenGL×ø±êÏµ×ª»»ÎªÆÁÄ»×ø±êÏµ
+	//å°†OpenGLåæ ‡ç³»è½¬æ¢ä¸ºå±å¹•åæ ‡ç³»
 	Vec2 screenPos = Director::getInstance()->convertToUI(clickPos);
-	// ×¢ÒâÁ½¸ö×ø±êÎ»ÖÃ
-	// Êó±êµã»÷µÄÊÇOpenGL×ø±êÏµ£¬×óÉÏ½Ç0£¬0£¬ÆÁÄ»×ø±ê×óÏÂ½Ç0,0
+	// æ³¨æ„ä¸¤ä¸ªåæ ‡ä½ç½®
+	// é¼ æ ‡ç‚¹å‡»çš„æ˜¯OpenGLåæ ‡ç³»ï¼Œå·¦ä¸Šè§’0ï¼Œ0ï¼Œå±å¹•åæ ‡å·¦ä¸‹è§’0,0
 	Vec2 mapPos = LocationToTMXPos(screenPos);
-	// ×ª»¯³ÉTMXµØÍ¼×ø±ê
+	// è½¬åŒ–æˆTMXåœ°å›¾åæ ‡
 	int mapX = (int)(mapPos.x), mapY = (int)(mapPos.y);
 
-	//½¨ÔìĞèÒªµÄ½ğ±Ò
+	//å»ºé€ éœ€è¦çš„é‡‘å¸
 	int buildCost{};
 
 	if (isTurretAble[mapX][mapY] == 0) {
-		// ´ú±íµ±Ç°Î»ÖÃÉÏÊÇÅÚËş
+		// ä»£è¡¨å½“å‰ä½ç½®ä¸Šæ˜¯ç‚®å¡”
 		isTurretAble[mapX][mapY] = 1 + numTower * 10;
 
-		//±éÀú»ñµÃµ±Ç°ÅÚËşÖÖÀàµÄname
+		//éå†è·å¾—å½“å‰ç‚®å¡”ç§ç±»çš„name
 		TurretData* turretData = nullptr;
 		std::string name;
 		int count = 1;
@@ -429,7 +429,7 @@ void GameScene::BuildTower(EventMouse* event, int numTower) {
 			count++;
 		}
 
-		//¸ù¾İµ±Ç°ËşµÄÀàĞÍ½øĞĞ¶ÔÓ¦µÄ½¨Ôì
+		//æ ¹æ®å½“å‰å¡”çš„ç±»å‹è¿›è¡Œå¯¹åº”çš„å»ºé€ 
 		Turret* turret;
 		if (numTower == 1) {
 			turret = Turret_TB::createWithSpriteFrameName(name, 1);
@@ -447,7 +447,7 @@ void GameScene::BuildTower(EventMouse* event, int numTower) {
 		turret->setCost3(turretData->getCost3());
 		turret->setDamage(turretData->getDamage());
 		turret->setRange(turretData->getRange());
-		//½«ĞÂ½¨µÄËş·ÅÈëµ±Ç°³¡¾°µÄËşµÄ¼¯ºÏÖĞ
+		//å°†æ–°å»ºçš„å¡”æ”¾å…¥å½“å‰åœºæ™¯çš„å¡”çš„é›†åˆä¸­
 		_currentTurrets.pushBack(turret);
 		turret->setName(name);
 		screenPos = TMXPosToLocation(mapPos);
@@ -460,22 +460,22 @@ void GameScene::BuildTower(EventMouse* event, int numTower) {
 }
 
 void GameScene::TouchTower(EventMouse* event) {
-	// »ñÈ¡Êó±êµã»÷µÄ×ø±ê
+	// è·å–é¼ æ ‡ç‚¹å‡»çš„åæ ‡
 	Vec2 clickPos = event->getLocation();
-	//½«OpenGL×ø±êÏµ×ª»»ÎªÆÁÄ»×ø±êÏµ
+	//å°†OpenGLåæ ‡ç³»è½¬æ¢ä¸ºå±å¹•åæ ‡ç³»
 	Vec2 screenPos = Director::getInstance()->convertToUI(clickPos);
-	// ×¢ÒâÁ½¸ö×ø±êÎ»ÖÃ
-	// Êó±êµã»÷µÄÊÇOpenGL×ø±êÏµ£¬×óÉÏ½Ç0£¬0£¬ÆÁÄ»×ø±ê×óÏÂ½Ç0,0
+	// æ³¨æ„ä¸¤ä¸ªåæ ‡ä½ç½®
+	// é¼ æ ‡ç‚¹å‡»çš„æ˜¯OpenGLåæ ‡ç³»ï¼Œå·¦ä¸Šè§’0ï¼Œ0ï¼Œå±å¹•åæ ‡å·¦ä¸‹è§’0,0
 	Vec2 mapPos = LocationToTMXPos(screenPos);
-	// ×ª»¯³ÉTMXµØÍ¼×ø±ê
+	// è½¬åŒ–æˆTMXåœ°å›¾åæ ‡
 	int mapX = (int)(mapPos.x), mapY = (int)(mapPos.y);
-	// µØÍ¼ÉÏ¿ÉÒÔ½¨ÔìÊ±
+	// åœ°å›¾ä¸Šå¯ä»¥å»ºé€ æ—¶
 
-	//»ñÈ¡µ±Ç°Éı¼¶ÊÂ¼şÊÇ·ñ¼¤»î
+	//è·å–å½“å‰å‡çº§äº‹ä»¶æ˜¯å¦æ¿€æ´»
 	int hasUpgrade = getHasUpgrade();
 
 	if (!hasUpgrade) {
-		//´´½¨ĞÂµÄ´¥Ãş²ãºÍ´¥Ãş¼àÌıÆ÷
+		//åˆ›å»ºæ–°çš„è§¦æ‘¸å±‚å’Œè§¦æ‘¸ç›‘å¬å™¨
 		createTouchLayer();
 		createTouchListener();
 	}
@@ -485,14 +485,14 @@ void GameScene::TouchTower(EventMouse* event) {
 	if (!hasUpgrade)
 		this->addChild(touch_layer, 10);
 
-	//Ìí¼Ó¹ØÓÚÉı¼¶³öÊÛµÄ¾«Áé
+	//æ·»åŠ å…³äºå‡çº§å‡ºå”®çš„ç²¾çµ
 	Sprite* circle = Sprite::create("CarrotGuardRes/UI/RangeBackground.png");
 	Sprite* upgrade_can = Sprite::create("CarrotGuardRes/Towers/upgrade_able.png");
 	Sprite* upgrade_not = Sprite::create("CarrotGuardRes/Towers/upgrade_unable.png");
 	Sprite* upgrade_max = Sprite::create("CarrotGuardRes/Towers/upgrade_top.png");
 	Sprite* sale = Sprite::create("CarrotGuardRes/Towers/sale.png");
 
-	//»ñµÃµ±Ç°×¼±¸Éı¼¶³öÊÛµÄËşµÄÏà¹ØĞÅÏ¢
+	//è·å¾—å½“å‰å‡†å¤‡å‡çº§å‡ºå”®çš„å¡”çš„ç›¸å…³ä¿¡æ¯
 	Turret* currentTower;
 	float currentRange;
 	int currentGrade, currentCost;
@@ -504,7 +504,7 @@ void GameScene::TouchTower(EventMouse* event) {
 	currentName = currentTower->getName();
 	currentGrade = isTurretAble[mapX][mapY] % 10;
 
-	//»ñµÃ¶ÔÓ¦ËşµÄÉı¼¶»¨·Ñ
+	//è·å¾—å¯¹åº”å¡”çš„å‡çº§èŠ±è´¹
 	switch (currentGrade) {
 	case 1:
 		currentCost = currentTower->getCost2();
@@ -519,14 +519,14 @@ void GameScene::TouchTower(EventMouse* event) {
 
 
 	if (!hasUpgrade) {
-		//ÉèÖÃÉı¼¶Ê±µÄÔ²ĞÎ·¶Î§
+		//è®¾ç½®å‡çº§æ—¶çš„åœ†å½¢èŒƒå›´
 		screenPos = TMXPosToLocation(mapPos);
 		circle->setVisible(true);
 		circle->setPosition(screenPos);
 		circle->setScale(2 * currentRange / circle->getContentSize().width);
 		circle->setName("circle");
 		touch_layer->addChild(circle);
-		//ÉèÖÃ¶ÔÓ¦Éı¼¶Í¼±ê
+		//è®¾ç½®å¯¹åº”å‡çº§å›¾æ ‡
 		if (currentGrade < 3) {
 			if (_goldValue >= currentCost) {
 				upgrade_can->setVisible(true);
@@ -541,7 +541,7 @@ void GameScene::TouchTower(EventMouse* event) {
 				touch_layer->addChild(upgrade_not);
 			}
 		}
-		//µ±Ç°ÒÑÉıµ½¶¥¼¶
+		//å½“å‰å·²å‡åˆ°é¡¶çº§
 		else {
 			upgrade_max->setVisible(true);
 			upgrade_max->setPosition(screenPos.x + _screenWidth * 0.004, screenPos.y + _screenHeight * 0.1);
@@ -555,7 +555,7 @@ void GameScene::TouchTower(EventMouse* event) {
 		touch_layer->addChild(sale);
 	}
 
-	//»ñÈ¡µ±Ç°½çÃæÉı¼¶³öÊÛÏà¹ØµÄÔªËØ
+	//è·å–å½“å‰ç•Œé¢å‡çº§å‡ºå”®ç›¸å…³çš„å…ƒç´ 
 	Sprite* Circle, * UpgradeCan, * Sale;
 	Circle = (Sprite*)touch_layer->getChildByName("circle");
 	UpgradeCan = (Sprite*)touch_layer->getChildByName("upgrade_can");
@@ -572,8 +572,8 @@ void GameScene::TouchTower(EventMouse* event) {
 		Vec2 clickPos = event->getLocation();
 		Vec2 screenPos = Director::getInstance()->convertToUI(clickPos);
 
-		//µã»÷Éı¼¶°´Å¥
-		if ((UpgradeCan) && UpgradeCan->getBoundingBox().containsPoint(screenPos)) {//¶ÌÂ·ÇóÖµÀ´ÅĞ¶ÏÊÇ·ñÎª¿ÉÒÔµã»÷°´Å¥
+		//ç‚¹å‡»å‡çº§æŒ‰é’®
+		if ((UpgradeCan) && UpgradeCan->getBoundingBox().containsPoint(screenPos)) {//çŸ­è·¯æ±‚å€¼æ¥åˆ¤æ–­æ˜¯å¦ä¸ºå¯ä»¥ç‚¹å‡»æŒ‰é’®
 			_eventDispatcher->removeEventListener(touch_listener);
 			UpgradeTower(buildTower);
 			_goldValue -= currentCost;
@@ -581,7 +581,7 @@ void GameScene::TouchTower(EventMouse* event) {
 			removeTouchLayer();
 			removeTouchListener();
 		}
-		//µã»÷³öÊÛ°´Å¥
+		//ç‚¹å‡»å‡ºå”®æŒ‰é’®
 		else if ((Sale) && Sale->getBoundingBox().containsPoint(screenPos)) {
 			_eventDispatcher->removeEventListener(touch_listener);
 			SaleTower(buildTower);
@@ -589,9 +589,9 @@ void GameScene::TouchTower(EventMouse* event) {
 			removeTouchLayer();
 			removeTouchListener();
 		}
-		//µã»÷ÆäËû²¿·Ö
+		//ç‚¹å‡»å…¶ä»–éƒ¨åˆ†
 		else {
-			_eventDispatcher->removeEventListener(touch_listener);//TBÏû³ıºóÒÆ³ılisenner£¬·ÀÖ¹¶à¸ölisenner´æÔÚÔì³Ébug
+			_eventDispatcher->removeEventListener(touch_listener);//TBæ¶ˆé™¤åç§»é™¤lisennerï¼Œé˜²æ­¢å¤šä¸ªlisennerå­˜åœ¨é€ æˆbug
 			this->removeChild(touch_layer);
 			removeTouchLayer();
 			removeTouchListener();
@@ -605,16 +605,16 @@ void GameScene::TouchTower(EventMouse* event) {
 
 void GameScene::UpgradeTower(EventMouse* event) {
 	MusicManager::getInstance()->upgradeSound();
-	// »ñÈ¡Êó±êµã»÷µÄ×ø±ê
+	// è·å–é¼ æ ‡ç‚¹å‡»çš„åæ ‡
 	Vec2 clickPos = event->getLocation();
-	//½«OpenGL×ø±êÏµ×ª»»ÎªÆÁÄ»×ø±êÏµ
+	//å°†OpenGLåæ ‡ç³»è½¬æ¢ä¸ºå±å¹•åæ ‡ç³»
 	Vec2 screenPos = Director::getInstance()->convertToUI(clickPos);
-	// ×¢ÒâÁ½¸ö×ø±êÎ»ÖÃ
-	// Êó±êµã»÷µÄÊÇOpenGL×ø±êÏµ£¬×óÉÏ½Ç0£¬0£¬ÆÁÄ»×ø±ê×óÏÂ½Ç0,0
+	// æ³¨æ„ä¸¤ä¸ªåæ ‡ä½ç½®
+	// é¼ æ ‡ç‚¹å‡»çš„æ˜¯OpenGLåæ ‡ç³»ï¼Œå·¦ä¸Šè§’0ï¼Œ0ï¼Œå±å¹•åæ ‡å·¦ä¸‹è§’0,0
 	Vec2 mapPos = LocationToTMXPos(screenPos);
-	// ×ª»¯³ÉTMXµØÍ¼×ø±ê
+	// è½¬åŒ–æˆTMXåœ°å›¾åæ ‡
 	int mapX = (int)(mapPos.x), mapY = (int)(mapPos.y);
-	//Í¨¹ıtag»ñÈ¡Éı¼¶µÄ·ÀÓùËş£¬²¢½øĞĞÉı¼¶²Ù×÷
+	//é€šè¿‡tagè·å–å‡çº§çš„é˜²å¾¡å¡”ï¼Œå¹¶è¿›è¡Œå‡çº§æ“ä½œ
 	Turret* currentTower;
 	currentTower = (Turret*)this->getChildByTag(mapX * 1000 + mapY);
 	int currentGrade, currentBase;
@@ -627,17 +627,17 @@ void GameScene::UpgradeTower(EventMouse* event) {
 
 void GameScene::SaleTower(EventMouse* event) {
 	MusicManager::getInstance()->sellSound();
-	// »ñÈ¡Êó±êµã»÷µÄ×ø±ê
+	// è·å–é¼ æ ‡ç‚¹å‡»çš„åæ ‡
 	Vec2 clickPos = event->getLocation();
-	//½«OpenGL×ø±êÏµ×ª»»ÎªÆÁÄ»×ø±êÏµ
+	//å°†OpenGLåæ ‡ç³»è½¬æ¢ä¸ºå±å¹•åæ ‡ç³»
 	Vec2 screenPos = Director::getInstance()->convertToUI(clickPos);
-	// ×¢ÒâÁ½¸ö×ø±êÎ»ÖÃ
-	// Êó±êµã»÷µÄÊÇOpenGL×ø±êÏµ£¬×óÉÏ½Ç0£¬0£¬ÆÁÄ»×ø±ê×óÏÂ½Ç0,0
+	// æ³¨æ„ä¸¤ä¸ªåæ ‡ä½ç½®
+	// é¼ æ ‡ç‚¹å‡»çš„æ˜¯OpenGLåæ ‡ç³»ï¼Œå·¦ä¸Šè§’0ï¼Œ0ï¼Œå±å¹•åæ ‡å·¦ä¸‹è§’0,0
 	Vec2 mapPos = LocationToTMXPos(screenPos);
-	// ×ª»¯³ÉTMXµØÍ¼×ø±ê
+	// è½¬åŒ–æˆTMXåœ°å›¾åæ ‡
 	int mapX = (int)(mapPos.x), mapY = (int)(mapPos.y);
 
-	//Í¨¹ıtag»ñÈ¡³öÊÛµÄ·ÀÓùËş²¢½øĞĞ³öÊÛ
+	//é€šè¿‡tagè·å–å‡ºå”®çš„é˜²å¾¡å¡”å¹¶è¿›è¡Œå‡ºå”®
 	Turret* currentTower;
 	currentTower = (Turret*)this->getChildByTag(mapX * 1000 + mapY);
 	int currentValue;
@@ -650,7 +650,7 @@ void GameScene::SaleTower(EventMouse* event) {
 
 void GameScene::initLevel()
 {
-	// ¼ÓÔØ¾«ÁéÖ¡£¬ËşÓë×Óµ¯£¬¹ÖÎï£¬ÂÜ²·  =========ºóĞøÓ¦¸ÄÎªÕë¶Ô¹Ø¿¨Êı¾İ¼ÓÔØ
+	// åŠ è½½ç²¾çµå¸§ï¼Œå¡”ä¸å­å¼¹ï¼Œæ€ªç‰©ï¼Œèåœ  =========åç»­åº”æ”¹ä¸ºé’ˆå¯¹å…³å¡æ•°æ®åŠ è½½
 	auto spriteFrameCache = SpriteFrameCache::getInstance();
 	spriteFrameCache->addSpriteFramesWithFile("CarrotGuardRes/TBList.plist");
 	spriteFrameCache->addSpriteFramesWithFile("CarrotGuardRes/TFList.plist");
@@ -662,17 +662,17 @@ void GameScene::initLevel()
 
 
 
-	// »ñÈ¡ÕÏ°­²ã£¬ÉèÖÃÕÏ°­²ãÒş²Ø
+	// è·å–éšœç¢å±‚ï¼Œè®¾ç½®éšœç¢å±‚éšè—
 	_collidable = _tileMap->getLayer("collidable");
 	_collidable->setVisible(true);
-	// ËùÓĞ¹Ø¿¨µØÍ¼15*10£¡£¡£¡£¡£¡£¡
-	// ³õÊ¼»¯¿É½¨ÔìÅÚËşÊı×é
+	// æ‰€æœ‰å…³å¡åœ°å›¾15*10ï¼ï¼ï¼ï¼ï¼ï¼
+	// åˆå§‹åŒ–å¯å»ºé€ ç‚®å¡”æ•°ç»„
 	for (int i = 0; i < 15; i++) {
 		for (int j = 0; j < 10; j++) {
 			isTurretAble[i][j] = 0;
 		}
 	}
-	// ½«ÕÏ°­ÎïÎ»ÖÃÉèÎª1,±íÊ¾²»ÄÜ½¨ÅÚËşÁË
+	// å°†éšœç¢ç‰©ä½ç½®è®¾ä¸º1,è¡¨ç¤ºä¸èƒ½å»ºç‚®å¡”äº†
 	for (int i = 0; i < 15; i++) {
 		for (int j = 0; j < 10; j++) {
 			if (_collidable->getTileGIDAt(Vec2(i, j)) != 0) {
@@ -683,18 +683,18 @@ void GameScene::initLevel()
 
 
 
-	// »ñµÃCarrot ¶ÔÏó
+	// è·å¾—Carrot å¯¹è±¡
 	auto carrotObject = _tileMap->getObjectGroup("carrotObject");
 
-	// »ñµÃcarrotµØÍ¼¶ÔÏó£¬¼´carrotÎ»ÖÃ
+	// è·å¾—carrotåœ°å›¾å¯¹è±¡ï¼Œå³carrotä½ç½®
 	ValueMap carrotValueMap = carrotObject->getObject("carrot");
 	int carrotX = carrotValueMap.at("x").asInt();
 	int carrotY = carrotValueMap.at("y").asInt();
-	// ´´½¨ÂÜ²·
+	// åˆ›å»ºèåœ
 	_carrot = Sprite::createWithSpriteFrameName(StringUtils::format("Carrot_%d.png", carrotHealth));
 	_carrot->setScale(0.5);
 	_carrot->setPosition(carrotX, carrotY);
-	_carrot->setName("carrot"); // Éè¸öÃû×Ö
+	_carrot->setName("carrot"); // è®¾ä¸ªåå­—
 	_tileMap->addChild(_carrot, 2);
 
 
@@ -704,26 +704,26 @@ void GameScene::initLevel()
 void GameScene::TopLabel()
 
 {
-	// ×¢ÒâÆÁÄ»Êı¾İµÄ¸¸½ÚµãÓ¦¸ÃÊÇscece £¬¶ø²»ÊÇÍßÆ¬µØÍ¼£¬ÒòÎªÍßÆ¬µØÍ¼½øĞĞÁËËõ·Å£¬
-	// Èç¹ûÊÇÍßÆ¬µØÍ¼µÄ×Ó½Úµã»ùÓÚÆÁÄ»µÄsetposition »á½øĞĞËõ·Å£¬±»¼·³öÆÁÄ»£¡£¡£¡£¡
-	// 1. ÏÔÊ¾³öÏÖÁË¶àÉÙ²¨¹ÖÎï
+	// æ³¨æ„å±å¹•æ•°æ®çš„çˆ¶èŠ‚ç‚¹åº”è¯¥æ˜¯scece ï¼Œè€Œä¸æ˜¯ç“¦ç‰‡åœ°å›¾ï¼Œå› ä¸ºç“¦ç‰‡åœ°å›¾è¿›è¡Œäº†ç¼©æ”¾ï¼Œ
+	// å¦‚æœæ˜¯ç“¦ç‰‡åœ°å›¾çš„å­èŠ‚ç‚¹åŸºäºå±å¹•çš„setposition ä¼šè¿›è¡Œç¼©æ”¾ï¼Œè¢«æŒ¤å‡ºå±å¹•ï¼ï¼ï¼ï¼
+	// 1. æ˜¾ç¤ºå‡ºç°äº†å¤šå°‘æ³¢æ€ªç‰©
 	_curNumberLabel = Label::createWithSystemFont(StringUtils::format("%d", std::min(_currNum, _monsterWave)), "Arial", 32);
 	_curNumberLabel->setColor(Color3B::YELLOW);
 	_curNumberLabel->setPosition(_screenWidth * 0.45, _screenHeight * 0.95);
 	//_tileMap->addChild(_curNumberLabel);
 	this->addChild(_curNumberLabel, 2);
-	// 2. Ò»¹²ÓĞ¶àÉÙ²¨¹ÖÎï
+	// 2. ä¸€å…±æœ‰å¤šå°‘æ³¢æ€ªç‰©
 	_numberLabel = Label::createWithSystemFont(StringUtils::format("/%dtimes", _monsterWave), "Arial", 32);
 	_curNumberLabel->setColor(Color3B::YELLOW);
 	_numberLabel->setPosition(_screenWidth * 0.53, _screenHeight * 0.95);
 	this->addChild(_numberLabel, 2);
-	// 3. ÓÒÉÏ½Ç½ğ±ÒÊıÁ¿
+	// 3. å³ä¸Šè§’é‡‘å¸æ•°é‡
 	_goldLabel = Label::createWithSystemFont(StringUtils::format("%d", _goldValue), "Arial-BoldMT", 32);
 	_goldLabel->setColor(Color3B::WHITE);
 	_goldLabel->setPosition(_screenWidth * 0.125f, _screenHeight * 0.95);
 	//_goldLabel->enableOutline(Color4B::WHITE, 2);
 	this->addChild(_goldLabel, 2);
-	//Ìí¼ÓÓÎÏ·½çÃæÉÏ²¿µÄui
+	//æ·»åŠ æ¸¸æˆç•Œé¢ä¸Šéƒ¨çš„ui
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	auto topImage = Sprite::create("CarrotGuardRes/UI/GameTop.png");
 	//topImage->setPosition(Vec2(_screenWidth / 2 + origin.x, _screenHeight + origin.y - topImage->getContentSize().height + _screenHeight * 0.01f));
@@ -731,13 +731,13 @@ void GameScene::TopLabel()
 	topImage->setScale(_screenWidth / topImage->getContentSize().width);
 	this->addChild(topImage, 1);
 
-	// ÔİÍ£°´Å¥
+	// æš‚åœæŒ‰é’®
 	auto pauseButton = Button::create("CarrotGuardRes/UI/pauseButton.png", "CarrotGuardRes/UI/continueButton.png");
 	pauseButton->setPosition(Vec2(_screenWidth / 2 + origin.x + _screenWidth * 0.33, _screenHeight + origin.y - _screenHeight * 0.055f));
 	this->addChild(pauseButton, 2);
 	pauseButton->addClickEventListener(CC_CALLBACK_1(GameScene::onPauseButton, this));
 
-	// ²Ëµ¥°´Å¥
+	// èœå•æŒ‰é’®
 	auto menuButton = Button::create("CarrotGuardRes/UI/gameMenuNormal.png", "CarrotGuardRes/UI/gameMenuSelected.png");
 	menuButton->setPosition(Vec2(_screenWidth / 2 + origin.x + _screenWidth * 0.43, _screenHeight + origin.y - _screenHeight * 0.055f));
 	this->addChild(menuButton, 2);
@@ -785,12 +785,12 @@ void GameScene::CountDown()
 	this->addChild(count3, 2);
 	this->addChild(count0, 2);
 
-	//´æµµ¹ÖÎïµÄ»Øµ÷º¯Êı
+	//å­˜æ¡£æ€ªç‰©çš„å›è°ƒå‡½æ•°
 	auto baginSaveGame = CallFunc::create([=] {
 		beganSaveGame();
 		});
 
-	// ÉèÖÃµ¹Êısequence¶¯×÷
+	// è®¾ç½®å€’æ•°sequenceåŠ¨ä½œ
 	auto countdown = Sequence::create(CallFunc::create([=] {
 		countBackground->setVisible(true);
 		count3->setVisible(true);
@@ -812,13 +812,13 @@ void GameScene::CountDown()
 							}), DelayTime::create(1), CallFunc::create([=] {
 								this->removeChild(count0);
 								this->removeChild(countBackground);
-								// ÓÎÏ·Ö÷Ñ­»·
+								// æ¸¸æˆä¸»å¾ªç¯
 								scheduleUpdate();
-								// ¼ÓÔØ´æµµ
+								// åŠ è½½å­˜æ¡£
 								if (IS_LOAD_SAVE_GAME) {
 									beganSaveGame();
 								}
-								// Éú³É¹ÖÎï
+								// ç”Ÿæˆæ€ªç‰©
 								generateMonsters();
 
 								}), NULL);
@@ -829,31 +829,31 @@ void GameScene::CountDown()
 
 void GameScene::onPauseButton(Ref* pSender) {
 	MusicManager::getInstance()->buttonSound();
-	// »ñÈ¡ÔİÍ£°´Å¥
+	// è·å–æš‚åœæŒ‰é’®
 	auto button = static_cast<ui::Button*>(pSender);
 	int isPaused = getIsPaused();
-	// µã»÷Ê±ÊÇÔİÍ£
+	// ç‚¹å‡»æ—¶æ˜¯æš‚åœ
 	if (isPaused) {
 		button->loadTextures("CarrotGuardRes/UI/pauseButton.png", "CarrotGuardRes/UI/pauseButton.png");
-		// »Ö¸´ÓÎÏ·½øĞĞ
+		// æ¢å¤æ¸¸æˆè¿›è¡Œ
 		this->scheduleUpdate();
 		Director::getInstance()->resume();
-		//ÒÆ³ıÔİÍ£±êÊ¶
+		//ç§»é™¤æš‚åœæ ‡è¯†
 		this->removeChildByName("pauseTop");
 		setIsPaused(0);
 	}
-	// µã»÷Ê±ÊÇÕı³£
+	// ç‚¹å‡»æ—¶æ˜¯æ­£å¸¸
 	else {
 		button->loadTextures("CarrotGuardRes/UI/continueButton.png", "CarrotGuardRes/UI/continueButton.png");
 
-		// Ìí¼Ó¶¥²¿ÔİÍ£±êÊ¶
+		// æ·»åŠ é¡¶éƒ¨æš‚åœæ ‡è¯†
 		auto pauseTop = Sprite::create("CarrotGuardRes/UI/pausing.png");
 		pauseTop->setName("pauseTop");
 		pauseTop->setPosition(Vec2(_screenWidth / 2, _screenHeight * 0.945));
 		pauseTop->setScale(2.0f);
 		this->addChild(pauseTop, 10);
 
-		//Í£Ö¹ÓÎÏ·½øĞĞ
+		//åœæ­¢æ¸¸æˆè¿›è¡Œ
 		this->unscheduleUpdate();
 		Director::getInstance()->pause();
 		setIsPaused(1);
@@ -864,18 +864,18 @@ void GameScene::onPauseButton(Ref* pSender) {
 void GameScene::onMenuButton() {
 	MusicManager::getInstance()->buttonSound();
 
-	//Í£Ö¹ÓÎÏ·½øĞĞ
+	//åœæ­¢æ¸¸æˆè¿›è¡Œ
 	this->unscheduleUpdate();
-	//Í£Ö¹ËùÓĞ½ÚµãµÄ¶¯×÷
-	this->pause();//Í£Ö¹µã»÷ÊÂ¼ş
-	Director::getInstance()->pause();// Í£Ö¹¶¯×÷ÊÂ¼ş
+	//åœæ­¢æ‰€æœ‰èŠ‚ç‚¹çš„åŠ¨ä½œ
+	this->pause();//åœæ­¢ç‚¹å‡»äº‹ä»¶
+	Director::getInstance()->pause();// åœæ­¢åŠ¨ä½œäº‹ä»¶
 
-	//´´½¨»ÒÉ«ÕÚÕÖ²ã
+	//åˆ›å»ºç°è‰²é®ç½©å±‚
 	auto menuLayer = LayerColor::create(Color4B(0, 0, 0, 150));
 	menuLayer->setPosition(Vec2::ZERO);
 	this->addChild(menuLayer, 10);
 
-	//Ìí¼ÓÔİÍ£²Ëµ¥±³¾°
+	//æ·»åŠ æš‚åœèœå•èƒŒæ™¯
 	auto menuBackground = Sprite::create("CarrotGuardRes/UI/gameMenu.png");
 	menuBackground->setPosition(Vec2(_screenWidth / 2, _screenHeight / 2));
 	menuBackground->setScale(1.5f);
@@ -884,7 +884,7 @@ void GameScene::onMenuButton() {
 	auto menu = Menu::create();
 	menu->setPosition(Vec2::ZERO);
 	menuLayer->addChild(menu, 1);
-	//Ìí¼ÓÔİÍ£²Ëµ¥ÉÏÏà¹Ø¹¦ÄÜ°´Å¥
+	//æ·»åŠ æš‚åœèœå•ä¸Šç›¸å…³åŠŸèƒ½æŒ‰é’®
 	auto continueButton = MenuItemImage::create("CarrotGuardRes/UI/continueNormal.png", "CarrotGuardRes/UI/continueSelected.png");
 	continueButton->setPosition(Vec2(_screenWidth * 0.495, _screenHeight * 0.649));
 	continueButton->setScale(1.5);
@@ -895,21 +895,21 @@ void GameScene::onMenuButton() {
 	chooseButton->setPosition(Vec2(_screenWidth * 0.495, _screenHeight * 0.375));
 	chooseButton->setScale(1.5);
 
-	// ¼ÌĞøÓÎÏ·Ñ¡Ïî
+	// ç»§ç»­æ¸¸æˆé€‰é¡¹
 	continueButton->setCallback([this, menuLayer](Ref* psender) {
 		MusicManager::getInstance()->buttonSound();
 		this->removeChild(menuLayer);
-		// ÅĞ¶ÏÔÚµã»÷²Ëµ¥°´Å¥Ö®Ç°ÊÇ·ñµã»÷¹ıÔİÍ£°´Å¥£¬·ÀÖ¹³öÏÖbug
+		// åˆ¤æ–­åœ¨ç‚¹å‡»èœå•æŒ‰é’®ä¹‹å‰æ˜¯å¦ç‚¹å‡»è¿‡æš‚åœæŒ‰é’®ï¼Œé˜²æ­¢å‡ºç°bug
 		if (getIsPaused() == 0) {
-			// »Ö¸´ÓÎÏ·½øĞĞ
+			// æ¢å¤æ¸¸æˆè¿›è¡Œ
 			this->scheduleUpdate();
-			// »Ö¸´ËùÓĞ½ÚµãµÄ¶¯×÷
+			// æ¢å¤æ‰€æœ‰èŠ‚ç‚¹çš„åŠ¨ä½œ
 			this->resume();
 			Director::getInstance()->resume();
 		}
 		});
 
-	//ÖØĞÂ¿ªÊ¼ÓÎÏ·Ñ¡Ïî
+	//é‡æ–°å¼€å§‹æ¸¸æˆé€‰é¡¹
 	restartButton->setCallback([this, menuLayer](Ref* psender) {
 		MusicManager::getInstance()->buttonSound();
 		auto gameScene = GameScene::createSceneWithLevel(1, 0);
@@ -920,7 +920,7 @@ void GameScene::onMenuButton() {
 		Director::getInstance()->resume();
 		});
 
-	//Ñ¡Ôñ¹Ø¿¨Ñ¡Ïî
+	//é€‰æ‹©å…³å¡é€‰é¡¹
 	chooseButton->setCallback([this, menuLayer](Ref* psender) {
 		MusicManager::getInstance()->buttonSound();
 		auto skylineScene = SkyLineSelection::createScene();
@@ -949,7 +949,7 @@ void GameScene::onMenuButton() {
 
 
 void GameScene::gameOver(int isWin) {
-	// Çå¿Õ´æµµ
+	// æ¸…ç©ºå­˜æ¡£
 	cocos2d::FileUtils* fileUtils = cocos2d::FileUtils::getInstance();
 	std::string path = "Level_" + std::to_string(currentLevel) + "_save.json";
 	if (fileUtils->isFileExist(fileUtils->getWritablePath() + path)) {
@@ -959,31 +959,31 @@ void GameScene::gameOver(int isWin) {
 		CCLOG("File does not exist: %s", (fileUtils->getWritablePath() + path).c_str());
 	}
 
-	//Í£Ö¹ÓÎÏ·½øĞĞ
+	//åœæ­¢æ¸¸æˆè¿›è¡Œ
 	this->unscheduleUpdate();
-	//Í£Ö¹ËùÓĞ½ÚµãµÄ¶¯×÷
+	//åœæ­¢æ‰€æœ‰èŠ‚ç‚¹çš„åŠ¨ä½œ
 	this->pause();
 
-	// ÉèÖÃ»ÒÉ«ÕÚÕÖ²ã
+	// è®¾ç½®ç°è‰²é®ç½©å±‚
 	auto menuLayer = LayerColor::create(Color4B(0, 0, 0, 150));
 	menuLayer->setPosition(Vec2::ZERO);
 	this->addChild(menuLayer, 10);
 
-	// ´´½¨²Ëµ¥
+	// åˆ›å»ºèœå•
 	auto menu = Menu::create();
 	menu->setPosition(Vec2::ZERO);
 	menuLayer->addChild(menu, 1);
 
-	// ÓÎÏ·Ê¤Àû
+	// æ¸¸æˆèƒœåˆ©
 	if (isWin) {
-		//½âËøÏÂÒ»¹Ø
+		//è§£é”ä¸‹ä¸€å…³
 		std::string content;
 
-		// Ê¹ÓÃFileUtils»ñÈ¡ÎÄ¼şÊı¾İ
+		// ä½¿ç”¨FileUtilsè·å–æ–‡ä»¶æ•°æ®
 		FileUtils* fileUtils = FileUtils::getInstance();
 		std::string filePath = fileUtils->getWritablePath() + "AllGameSave.json";
 		if (fileUtils->isFileExist(filePath)) {
-			// ¶ÁÈ¡ÎÄ¼şÄÚÈİ
+			// è¯»å–æ–‡ä»¶å†…å®¹
 			content = fileUtils->getStringFromFile(filePath);
 		}
 		else {
@@ -991,17 +991,17 @@ void GameScene::gameOver(int isWin) {
 		}
 		content[currentLevel] = '1';
 		fileUtils->writeStringToFile(content, filePath);
-		//Ìí¼ÓÓÎÏ·»ñÊ¤½çÃæ
+		//æ·»åŠ æ¸¸æˆè·èƒœç•Œé¢
 		auto gameWinBackground = Sprite::create("CarrotGuardRes/UI/WinGame.png");
 		gameWinBackground->setPosition(Vec2(_screenWidth / 2, _screenHeight / 2));
 		gameWinBackground->setScale(1.5f);
 		menuLayer->addChild(gameWinBackground, 0);
-		//Ìí¼Ó»ñÊ¤µÄ½ğÂÜ²·±êÊ¶
+		//æ·»åŠ è·èƒœçš„é‡‘èåœæ ‡è¯†
 		auto goldenCarrot = Sprite::create("CarrotGuardRes/UI/goldenCarrot.png");
 		goldenCarrot->setPosition(Vec2(_screenWidth * 0.493, _screenHeight * 0.7));
 		menuLayer->addChild(goldenCarrot, 0);
 
-		// Ê¤ÀûµÄÏà¹ØÌáÊ¾Óï
+		// èƒœåˆ©çš„ç›¸å…³æç¤ºè¯­
 		_curNumberLabel = Label::createWithSystemFont(StringUtils::format("%d", _currNum > _monsterWave ? _monsterWave : _currNum), "Arial", 32);
 		_curNumberLabel->setColor(Color3B::YELLOW);
 		_curNumberLabel->setPosition(_screenWidth * 0.51, _screenHeight * 0.54);
@@ -1013,19 +1013,19 @@ void GameScene::gameOver(int isWin) {
 		this->addChild(_curNumberLabel, 10);
 		this->addChild(loseWordLeft, 10);
 		this->addChild(loseWordRight, 10);
-		//¼ÌĞøÓÎÏ·°´Å¥
+		//ç»§ç»­æ¸¸æˆæŒ‰é’®
 		auto continueButton = MenuItemImage::create("CarrotGuardRes/UI/continueNormal.png", "CarrotGuardRes/UI/continueSelected.png");
 		continueButton->setPosition(Vec2(_screenWidth * 0.613, _screenHeight * 0.375));
 		continueButton->setScale(1.38);
 
 		continueButton->setCallback([this, menuLayer](Ref* psender) {
 			MusicManager::getInstance()->buttonSound();
-			//Èôµ±Ç°Î´µ½¿ª·ÅµÄ×îºóÒ»¹Ø£¬Ôò½øĞĞÏÂÒ»¹Ø
+			//è‹¥å½“å‰æœªåˆ°å¼€æ”¾çš„æœ€åä¸€å…³ï¼Œåˆ™è¿›è¡Œä¸‹ä¸€å…³
 			if (currentLevel < 2) {
 				auto gameScene = GameScene::createSceneWithLevel(currentLevel + 1, 0);
 				Director::getInstance()->replaceScene(gameScene);
 			}
-			//Èôµ±Ç°ÒÑ¾­ÊÇ¿ª·ÅµÄ×îºóÒ»¹Ø£¬Ôò·µ»ØÑ¡Ôñ¹Ø¿¨½çÃæ
+			//è‹¥å½“å‰å·²ç»æ˜¯å¼€æ”¾çš„æœ€åä¸€å…³ï¼Œåˆ™è¿”å›é€‰æ‹©å…³å¡ç•Œé¢
 			else {
 				auto skylineScene = SkyLineSelection::createScene();
 				Director::getInstance()->replaceScene(skylineScene);
@@ -1033,15 +1033,15 @@ void GameScene::gameOver(int isWin) {
 			});
 		menu->addChild(continueButton, 1);
 	}
-	// ÓÎÏ·Ê§°Ü
+	// æ¸¸æˆå¤±è´¥
 	else {
 		auto gameLoseBackground = Sprite::create("CarrotGuardRes/UI/LoseGame.png");
 		gameLoseBackground->setPosition(Vec2(_screenWidth / 2 + _screenWidth * 0.01, _screenHeight / 2 + _screenHeight * 0.015));
 		gameLoseBackground->setScale(1.5f);
 		menuLayer->addChild(gameLoseBackground, 0);
 
-		// ÓÎÏ·Ê§°ÜµÄÏà¹ØÌáÊ¾Óï
-		_curNumberLabel = Label::createWithSystemFont(StringUtils::format("%d", _currNum - 1), "Arial", 32);// ÔİÊ±Ã»¸ãcurrnumÎªÊ²Ã´»á´ó1£¬ËùÒÔÏÈ-1
+		// æ¸¸æˆå¤±è´¥çš„ç›¸å…³æç¤ºè¯­
+		_curNumberLabel = Label::createWithSystemFont(StringUtils::format("%d", _currNum - 1), "Arial", 32);// æš‚æ—¶æ²¡æcurrnumä¸ºä»€ä¹ˆä¼šå¤§1ï¼Œæ‰€ä»¥å…ˆ-1
 		_curNumberLabel->setColor(Color3B::YELLOW);
 		_curNumberLabel->setPosition(_screenWidth * 0.51, _screenHeight * 0.54);
 		Label* loseWordLeft = Label::createWithSystemFont("fought off", "Arial", 30);
@@ -1052,12 +1052,12 @@ void GameScene::gameOver(int isWin) {
 		this->addChild(_curNumberLabel, 10);
 		this->addChild(loseWordLeft, 10);
 		this->addChild(loseWordRight, 10);
-		//ÖØĞÂÓÎÏ·°´Å¥
+		//é‡æ–°æ¸¸æˆæŒ‰é’®
 		auto againButton = MenuItemImage::create("CarrotGuardRes/UI/AgainNormal.png", "CarrotGuardRes/UI/AgainSelected.png");
 		againButton->setPosition(Vec2(_screenWidth * 0.61, _screenHeight * 0.37));
 		againButton->setScale(0.9);
 
-		// ÖØĞÂ¿ªÊ¼°´Å¥µÄÑ¡Ïî
+		// é‡æ–°å¼€å§‹æŒ‰é’®çš„é€‰é¡¹
 		againButton->setCallback([this, menuLayer](Ref* psender) {
 			MusicManager::getInstance()->buttonSound();
 			auto gameScene = GameScene::createSceneWithLevel(1, 0);
@@ -1071,7 +1071,7 @@ void GameScene::gameOver(int isWin) {
 	}
 
 
-	// Ñ¡ÔñÓÎÏ·¹Ø¿¨°´Å¥
+	// é€‰æ‹©æ¸¸æˆå…³å¡æŒ‰é’®
 	auto chooseButton = MenuItemImage::create("CarrotGuardRes/UI/chooseLevelNormal.png", "CarrotGuardRes/UI/chooseLevelSelected.png");
 	chooseButton->setPosition(Vec2(_screenWidth * 0.38, _screenHeight * 0.37));
 	chooseButton->setScale(1.4);
@@ -1092,14 +1092,14 @@ void GameScene::gameOver(int isWin) {
 
 
 // TMX point ->Screen
-// µØÍ¼¸ñ×Ó×ø±ê×ª»¯³ÉÆÁÄ»×ø±ê
+// åœ°å›¾æ ¼å­åæ ‡è½¬åŒ–æˆå±å¹•åæ ‡
 Vec2 GameScene::TMXPosToLocation(Vec2 pos)
-{   // ×¢Òâ * _tileMap->getScale() £¡£¡£¡
+{   // æ³¨æ„ * _tileMap->getScale() ï¼ï¼ï¼
 	int x = (int)(pos.x * (_tileMap->getTileSize().width * _tileMap->getScale() / CC_CONTENT_SCALE_FACTOR()));
 	float pointHeight = _tileMap->getTileSize().height * _tileMap->getScale() / CC_CONTENT_SCALE_FACTOR();
 	int y = (int)((_tileMap->getMapSize().height * pointHeight) - (pos.y * pointHeight));
-	// ÏÖÔÚÕâ¸ö×ø±ê×ª»¯ÊÇ×ªµ½×óÉÏ½Çeg: (0,0)->(0,640)   // windowÓÎÏ·ÆÁÄ»ÉèÖÃ(960,640)
-	// ÎÒÃÇÔÙ½«Æä×ª»¯³É¸ñ×ÓµÄÖĞĞÄ
+	// ç°åœ¨è¿™ä¸ªåæ ‡è½¬åŒ–æ˜¯è½¬åˆ°å·¦ä¸Šè§’eg: (0,0)->(0,640)   // windowæ¸¸æˆå±å¹•è®¾ç½®(960,640)
+	// æˆ‘ä»¬å†å°†å…¶è½¬åŒ–æˆæ ¼å­çš„ä¸­å¿ƒ
 	x += (_tileMap->getTileSize().width * _tileMap->getScale() / CC_CONTENT_SCALE_FACTOR()) / 2.0;
 	y -= (_tileMap->getTileSize().width * _tileMap->getScale() / CC_CONTENT_SCALE_FACTOR()) / 2.0;
 #ifdef DEBUG
@@ -1107,16 +1107,12 @@ Vec2 GameScene::TMXPosToLocation(Vec2 pos)
 	CCLOG("Screen.x: %d, Screen.y: %d", x, y);
 #endif // DEBUG
 
-
-
 	return Vec2(x, y);
 
 }
 
-
-
 // Screen ->TMX point
-// ÆÁÄ»×ø±ê×ª»¯³ÉµØÍ¼¸ñ×Ó×ø±ê
+// å±å¹•åæ ‡è½¬åŒ–æˆåœ°å›¾æ ¼å­åæ ‡
 Vec2 GameScene::LocationToTMXPos(Vec2 pos)
 {
 	int x = (int)(pos.x) / (_tileMap->getTileSize().width * _tileMap->getScale() / CC_CONTENT_SCALE_FACTOR());
@@ -1134,8 +1130,8 @@ Vec2 GameScene::LocationToTMXPos(Vec2 pos)
 
 
 
-// Éú³É¹ÖÎï
-// Ã¿²¨¹ÖÎï5.0s£¬Ã¿¸ö¹ÖÉú³É¼ä¸ô0.5s
+// ç”Ÿæˆæ€ªç‰©
+// æ¯æ³¢æ€ªç‰©5.0sï¼Œæ¯ä¸ªæ€ªç”Ÿæˆé—´éš”0.5s
 void GameScene::generateMonsters() {
 	float interval = 5.0f;
 	this->schedule([=](float dt) {
@@ -1156,13 +1152,10 @@ void GameScene::generateMonsters() {
 
 }
 
-// µ÷ºÃÁËhhh,×¢ÒâmutableÔÚlambdaµÄÊ¹ÓÃ£¬¼°from++£¬×¢ÒâÃ¿´Îµ÷ÓÃµÄ»°lambdaÖĞµÄfrom¶¼»áÔÚÉÏÒ»´Î»ù´¡ÉÏ++£¬¶ø²»ÊÇ¹Ì¶¨µÄfrom+1£¬
-// Í¬Ê±Íâ²¿µÄfrom²»±ä£¬×¢ÒâÕâ¸öÓï·¨µã£¬
 void GameScene::generateMonsterWave() {
 
 	//_monsterNum;
 	if (_currNum > _monsterWave) {
-
 		return;
 	}
 	int end = _everyWave[_currNum];
@@ -1171,15 +1164,14 @@ void GameScene::generateMonsterWave() {
 		for (auto monsterData : _monsterDatas) {
 			if (i >= _monsterNum) {
 				if (_monsterNum < end) {
-
 					auto monster = Monster::createWithSpriteFrameName(monsterData->getName());
 					_currentMonsters.pushBack(monster);
-					// ÃªµãÉèÎªÖĞĞÄ
+					// é”šç‚¹è®¾ä¸ºä¸­å¿ƒ
 					monster->setAnchorPoint(Vec2(0.5f, 0.5f));
 					monster->setMaxLifeValue(monsterData->getLifeValue());
 					monster->setGold(monsterData->getGold());
 					monster->setSpeed(monsterData->getSpeed());
-					monster->setPointPath(_pathPoints); // ´«µİÂ·¾¶¸ø¹ÖÎï
+					monster->setPointPath(_pathPoints); // ä¼ é€’è·¯å¾„ç»™æ€ªç‰©
 					monster->setName(monsterData->getName());
 					this->addChild(monster, 8);
 					monster->startMoving();
@@ -1195,12 +1187,12 @@ void GameScene::generateMonsterWave() {
 		}, 0.5f, "generateMonsterWave");
 }
 
-// ÓĞ¹ÖÎïµ½´ïÖÕµã£¬¶ÔÂÜ²·Ôì³ÉÉËº¦
+// æœ‰æ€ªç‰©åˆ°è¾¾ç»ˆç‚¹ï¼Œå¯¹èåœé€ æˆä¼¤å®³
 void GameScene::HurtCarrot(int isHurt) {
 	MusicManager::getInstance()->carrotSound();
 	if (isHurt)
 		carrotHealth--;;
-	// ÅĞ¶ÏÓÎÏ·ÊÇ·ñ½áÊø
+	// åˆ¤æ–­æ¸¸æˆæ˜¯å¦ç»“æŸ
 	if (carrotHealth <= 0) {
 		CCLOG("Game Over!");
 	}
@@ -1212,12 +1204,12 @@ void GameScene::HurtCarrot(int isHurt) {
 	}
 }
 
-// ´ÓÊı×éÖĞÉ¾³ı³¡ÉÏ¹ÖÎï
+// ä»æ•°ç»„ä¸­åˆ é™¤åœºä¸Šæ€ªç‰©
 void GameScene::removeMonster(Monster* monster) {
 	_currentMonsters.eraseObject(monster);
 }
 
-// »ñµÃÏÖ´æ¹ÖÎï
+// è·å¾—ç°å­˜æ€ªç‰©
 Vector<Monster*>& GameScene::getMonsters() {
 	return _currentMonsters;
 }
@@ -1225,12 +1217,11 @@ Vector<Monster*>& GameScene::getMonsters() {
 
 void GameScene::update(float dt)
 {
-	// **************±ğ¶¯Õâ¸öË³Ğò***************
-	// ¸üĞÂ¹ÖÎï
+	// æ›´æ–°æ€ªç‰©
 	updateMonster();
-	// ¸üĞÂ´æµµ
+	// æ›´æ–°å­˜æ¡£
 	SaveGame();
-	// ¸üĞÂÓÎÏ·½çÃæ
+	// æ›´æ–°æ¸¸æˆç•Œé¢
 	updateGameState();
 }
 
@@ -1238,26 +1229,24 @@ void GameScene::updateMonster()
 {
 	Vector<Monster*> monstersToRemove;
 	for (auto monster : _currentMonsters) {
-		// ÅĞ¶Ï¹ÖÎïÊÇ·ñ±»ÏûÃğ,Ôö¼Ó½ğ±Ò
-
+		// åˆ¤æ–­æ€ªç‰©æ˜¯å¦è¢«æ¶ˆç­,å¢åŠ é‡‘å¸
 		if (monster->getLifeValue() <= 0) {
 			MusicManager::getInstance()->normalSound();
 			_goldValue += monster->getGold();
-			monster->removeHP();//ÒÆ³ıÑªÌõ
+			monster->removeHP();//ç§»é™¤è¡€æ¡
 			monstersToRemove.pushBack(monster);
 			continue;
 		}
 		else {
-			monster->setHP();//¸üĞÂÑªÌõ
+			monster->setHP();//æ›´æ–°è¡€æ¡
 		}
-		// ÅĞ¶Ï¹ÖÎïÊÇ·ñµ½´ïÖÕµã£¬¶ÔÂÜ²·Ôì³ÉÉËº¦
+		// åˆ¤æ–­æ€ªç‰©æ˜¯å¦åˆ°è¾¾ç»ˆç‚¹ï¼Œå¯¹èåœé€ æˆä¼¤å®³
 		if (monster->getisLastPoint()) {
 			HurtCarrot(1);
 			monstersToRemove.pushBack(monster);
 		}
 	}
-	// ÔÚµü´úÈİÆ÷µÄ¹ı³ÌÖĞÉ¾³ıÔªËØÊÇ²»°²È«µÄ£¬ÒòÎª»áµ¼ÖÂµü´úÆ÷Ê§Ğ§
-	// ÒÆ³ı¹ÖÎï
+	// ç§»é™¤æ€ªç‰©
 	for (auto monster : monstersToRemove) {
 		monster->removeFromParent();
 		_currentMonsters.eraseObject(monster);
@@ -1267,12 +1256,12 @@ void GameScene::updateMonster()
 
 void GameScene::updateGameState()
 {
-	// ¸üĞÂ½ğ±Ò±êÇ©
+	// æ›´æ–°é‡‘å¸æ ‡ç­¾
 	_goldLabel->setString(StringUtils::format("%d", _goldValue));
-	// ¸üĞÂ²¨Êı±êÇ©
+	// æ›´æ–°æ³¢æ•°æ ‡ç­¾
 	_curNumberLabel->setString(StringUtils::format("%d", _currNum > _monsterWave ? _monsterWave : _currNum));
 
-	// Ôö¼Ó×îºóÒ»²¨¹ÖÎï¶¯»­
+	// å¢åŠ æœ€åä¸€æ³¢æ€ªç‰©åŠ¨ç”»
 	if (_currNum == _monsterWave && getIsFinalWave() == 1) {
 		auto finalWave = Sprite::create("CarrotGuardRes/UI/finalWave.png");
 		finalWave->setName("finalWave");
@@ -1280,23 +1269,23 @@ void GameScene::updateGameState()
 		finalWave->setScale(2.0f);
 		this->addChild(finalWave, 10);
 
-		// ´´½¨ÑÓ³Ù¶¯×÷ºÍÒÆ³ı½Úµã¶¯×÷µÄ×éºÏ¶¯×÷
+		// åˆ›å»ºå»¶è¿ŸåŠ¨ä½œå’Œç§»é™¤èŠ‚ç‚¹åŠ¨ä½œçš„ç»„åˆåŠ¨ä½œ
 		auto delay = DelayTime::create(1.0f);
 		auto remove = RemoveSelf::create();
 		auto sequence = Sequence::create(delay, remove, nullptr);
 
-		// Ö´ĞĞ×éºÏ¶¯×÷
+		// æ‰§è¡Œç»„åˆåŠ¨ä½œ
 		finalWave->runAction(sequence);
 		setIsFinalWave(0);
 	}
-	// Ê§°Ü
+	// å¤±è´¥
 	if (getCarrotHealth() <= 0) {
 		gameOver(0);
 		CCLOG("****************GAME OVER***************");
 		return;
 
 	}
-	// ³É¹¦
+	// æˆåŠŸ
 	if (_monsterDeath >= _monsterAll) {
 		gameOver(1);
 		CCLOG("***************YOU WIN*******************");
@@ -1320,7 +1309,7 @@ void GameScene::SaveGame()
 			continue;
 		}
 		rapidjson::Value monsterObject(rapidjson::kObjectType);
-		// string Ğ´Èë
+		// string å†™å…¥
 		std::string monsterName = monster->getName();
 		rapidjson::Value monsterNameValue(rapidjson::kStringType);
 		monsterNameValue.SetString(monsterName.c_str(), monsterName.length(), document.GetAllocator());
@@ -1346,22 +1335,17 @@ void GameScene::SaveGame()
 		}
 	}
 	document.AddMember("TurretMap", TurretMap, document.GetAllocator());
-	//****************************
-	// ÓĞbug ÄÚ´æ·ÃÎÊ´íÎó£¬µ«ÊÇ¸´ÏÖ²»³öÀ´ÁË
-	// 
-	//****************************
-
 	rapidjson::Value bullets(rapidjson::kArrayType);
-	// »ñÈ¡µ±Ç°³¡¾°ÖĞµÄËùÓĞ×Ó½Úµã
+	// è·å–å½“å‰åœºæ™¯ä¸­çš„æ‰€æœ‰å­èŠ‚ç‚¹
 	auto children = this->getChildren();
-	// ÕıÔò±í´ïÊ½
+	// æ­£åˆ™è¡¨è¾¾å¼
 	std::regex pattern(".*bullet.*");
 	for (const auto& child : children) {
-		auto sprite = dynamic_cast<Sprite*>(child);// ½«child×ª»¯ÎªSpriteÀàĞÍ
-		// ÅĞ¶ÏÊÇ·ñÊÇ×Óµ¯
+		auto sprite = dynamic_cast<Sprite*>(child);// å°†childè½¬åŒ–ä¸ºSpriteç±»å‹
+		// åˆ¤æ–­æ˜¯å¦æ˜¯å­å¼¹
 		if (sprite && std::regex_match(sprite->getName(), pattern)) {//
 			rapidjson::Value bulletObject(rapidjson::kObjectType);
-			// string Ğ´Èë
+			// string å†™å…¥
 			std::string spriteName = sprite->getName();
 			rapidjson::Value spriteNameValue(rapidjson::kStringType);
 			spriteNameValue.SetString(spriteName.c_str(), spriteName.length(), document.GetAllocator());
@@ -1374,17 +1358,13 @@ void GameScene::SaveGame()
 		}
 	}
 	document.AddMember("bullets", bullets, document.GetAllocator());
-
-
-
-
-	// ´´½¨Ò»¸ö rapidjson::StringBuffer ¶ÔÏó£¬ÓÃÓÚ´æ´¢ JSON ×Ö·û´®
-	rapidjson::StringBuffer buffer;// StringBuffer ÊÇÒ»¸ö¿É±äµÄ×Ö·ûĞòÁĞ£¬¿ÉÒÔÏñ std::string Ò»ÑùÊ¹ÓÃ
-	// ´´½¨Ò»¸ö rapidjson::Writer ¶ÔÏó£¬ÓÃÓÚ½« JSON ÎÄµµĞ´Èëµ½ StringBuffer ÖĞ
+	// åˆ›å»ºä¸€ä¸ª rapidjson::StringBuffer å¯¹è±¡ï¼Œç”¨äºå­˜å‚¨ JSON å­—ç¬¦ä¸²
+	rapidjson::StringBuffer buffer;// StringBuffer æ˜¯ä¸€ä¸ªå¯å˜çš„å­—ç¬¦åºåˆ—
+	// åˆ›å»ºä¸€ä¸ª rapidjson::Writer å¯¹è±¡
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-	// ½« JSON ÎÄµµĞ´Èë StringBuffer ÖĞ
-	document.Accept(writer);// Accept() ½ÓÊÜÒ»¸ö Document ¶ÔÏó£¬½«ÆäÒÔ JSON ¸ñÊ½Ğ´Èëµ½ StringBuffer ÖĞ
-	gameMassageBuffer = buffer.GetString(); // ½« StringBuffer ÖĞµÄ×Ö·ûÊä³öµ½ std::string ÖĞ
+	// å°† JSON æ–‡æ¡£å†™å…¥ StringBuffer ä¸­
+	document.Accept(writer);// Accept() æ¥å—ä¸€ä¸ª Document å¯¹è±¡
+	gameMassageBuffer = buffer.GetString(); // å°† StringBuffer ä¸­çš„å­—ç¬¦è¾“å‡ºåˆ° std::string ä¸­
 	cocos2d::FileUtils* fileUtils = cocos2d::FileUtils::getInstance();
 	std::string path = "Level_" + std::to_string(currentLevel) + "_save.json";
 	fileUtils->writeStringToFile(buffer.GetString(), fileUtils->getWritablePath() + path);
@@ -1392,36 +1372,36 @@ void GameScene::SaveGame()
 
 void GameScene::LoadSaveGame()
 {
-	// rapidjson ¶ÔÏó
+	// rapidjson å¯¹è±¡
 	rapidjson::Document document;
 
-	// ¸ù¾İ´«µİµÄ¹Ø¿¨ÖµselectLevel»ñµÃ¶ÔÓ¦µÄ¹Ø¿¨Êı¾İÎÄ¼ş
+	// æ ¹æ®ä¼ é€’çš„å…³å¡å€¼selectLevelè·å¾—å¯¹åº”çš„å…³å¡æ•°æ®æ–‡ä»¶
 	cocos2d::FileUtils* fileUtils = cocos2d::FileUtils::getInstance();
 	std::string path = "Level_" + std::to_string(currentLevel) + "_save.json";
 	std::string filePath = fileUtils->getWritablePath() + path;
 
-	// ¶ÁÈ¡ÎÄ¼şÄÚÈİ
+	// è¯»å–æ–‡ä»¶å†…å®¹
 	std::string contentStr = FileUtils::getInstance()->getStringFromFile(filePath);
-	// ÅĞ¶ÏÎÄ¼şÊÇ·ñÎª¿Õ
+	// åˆ¤æ–­æ–‡ä»¶æ˜¯å¦ä¸ºç©º
 	if (contentStr.empty() || contentStr == " ") {
-		// cocos º¯Êı²»ÔÊĞíÊäÈë¿Õ×Ö·û´®£¬Ğ´ÈëÒ»¸ö¿Õ¸ñ£¬´ú±íÇå¿Õ´æµµ
+		// cocos å‡½æ•°ä¸å…è®¸è¾“å…¥ç©ºå­—ç¬¦ä¸²ï¼Œå†™å…¥ä¸€ä¸ªç©ºæ ¼ï¼Œä»£è¡¨æ¸…ç©ºå­˜æ¡£
 		// fileUtils->writeStringToFile(" ", fileUtils->getWritablePath() + path); 
 		CCLOG("file is empty");
 		return;
 	}
-	// ½âÎöcontentStrÖĞjsonÊı¾İ£¬²¢´æµ½documentÖĞ
+	// è§£æcontentSträ¸­jsonæ•°æ®ï¼Œå¹¶å­˜åˆ°documentä¸­
 	document.Parse<0>(contentStr.c_str());
 
-	// ¶ÁÈ¡´æµµÊı¾İ
+	// è¯»å–å­˜æ¡£æ•°æ®
 	_currNum = document["currNum"].GetInt();
 	_goldValue = document["goldValue"].GetInt();
 	carrotHealth = document["carrotHealth"].GetInt();
 	_monsterDeath = document["monsterDeath"].GetInt();
 	_monsterNum = document["monsterNum"].GetInt();
-	//  »ñµÃ¹Ø¿¨´æµµµÄ¹ÖÎï
+	//  è·å¾—å…³å¡å­˜æ¡£çš„æ€ªç‰©
 	const rapidjson::Value& monsterArray = document["monsters"];
 	for (int i = 0; i < monsterArray.Size(); i++) {
-		// »ñµÃÃ¿Ò»¸ö¹ÖÎïÊı¾İ
+		// è·å¾—æ¯ä¸€ä¸ªæ€ªç‰©æ•°æ®
 		std::string name = monsterArray[i]["name"].GetString();
 		float lifeValue = monsterArray[i]["lifeValue"].GetFloat();
 		int MaxLifeValue = monsterArray[i]["MaxLifeValue"].GetFloat();
@@ -1430,7 +1410,7 @@ void GameScene::LoadSaveGame()
 		float speed = monsterArray[i]["speed"].GetFloat();
 		float screenX = monsterArray[i]["screen.x"].GetFloat();
 		float screenY = monsterArray[i]["screen.y"].GetFloat();
-		// ½«Êı¾İ´«µ½MonsterData¶ÔÏóÖĞ
+		// å°†æ•°æ®ä¼ åˆ°MonsterDataå¯¹è±¡ä¸­
 		auto monsterData = MonsterData::create();
 		monsterData->setName(name);
 		monsterData->setCurLifeValue(lifeValue);
@@ -1439,10 +1419,10 @@ void GameScene::LoadSaveGame()
 		monsterData->setStep(step);
 		monsterData->setSpeed(speed);
 		monsterData->setposition(Vec2(screenX, screenY));
-		// ½«Æä´«µ½¹Ø¿¨¹ÖÎï¼¯ºÏÖĞ
+		// å°†å…¶ä¼ åˆ°å…³å¡æ€ªç‰©é›†åˆä¸­
 		_monsterSaveDatas.pushBack(monsterData);
 	}
-	// ¸üĞÂisTurretAbleÊı×é
+	// æ›´æ–°isTurretAbleæ•°ç»„
 	const rapidjson::Value& TurretMapArray = document["TurretMap"];
 	for (int i = 0; i < TurretMapArray.Size(); i++) {
 		int x = TurretMapArray[i]["x"].GetInt();
@@ -1454,19 +1434,19 @@ void GameScene::LoadSaveGame()
 
 void GameScene::initSaveGame()
 {
-	// ¸üĞÂcarrot
+	// æ›´æ–°carrot
 	if (_carrot != nullptr && carrotHealth > 0) {
 		_carrot->setSpriteFrame(StringUtils::format("Carrot_%d.png", carrotHealth));
 	}
 	if (_carrot != nullptr && carrotHealth <= 0) {
 		_carrot->removeFromParent();
 	}
-	// ¼ÓÔØturret
+	// åŠ è½½turret
 	for (int i = 0; i < 15; i++) {
 		for (int j = 0; j < 10; j++) {
-			// ÅĞ¶Ïµ±Ç°Î»ÖÃÊÇ·ñÓĞÅÚËş
+			// åˆ¤æ–­å½“å‰ä½ç½®æ˜¯å¦æœ‰ç‚®å¡”
 			if (isTurretAble[i][j] / 10 != 0) {
-				// »ñÈ¡µ±Ç°ÅÚËşÖÖÀà
+				// è·å–å½“å‰ç‚®å¡”ç§ç±»
 				TurretData* turretData = nullptr;
 				int count = 1;
 				for (const auto& temp : _turretDatas) {
@@ -1502,7 +1482,7 @@ void GameScene::initSaveGame()
 				turret->setCost3(turretData->getCost3());
 				turret->setDamage(turretData->getDamage());
 				turret->setRange(turretData->getRange());
-				// ¸ü¸ÄÉËº¦·¶Î§
+				// æ›´æ”¹ä¼¤å®³èŒƒå›´
 				for (int i = 1; i < turret->getLevel(); i++) {
 					turret->setDamage(turret->getDamage() * 2.0);
 					turret->setRange(turret->getRange() * 2.0);
@@ -1514,17 +1494,17 @@ void GameScene::initSaveGame()
 			}
 		}
 	}
-	// ¼ÓÔØ¹ÖÎï
+	// åŠ è½½æ€ªç‰©
 	for (const auto& monsterData : _monsterSaveDatas) {
 		auto monster = Monster::createWithSpriteFrameName(monsterData->getName());
 		_currentMonsters.pushBack(monster);
-		// ÃªµãÉèÎªÖĞĞÄ
+		// é”šç‚¹è®¾ä¸ºä¸­å¿ƒ
 		monster->setAnchorPoint(Vec2(0.5f, 0.5f));
 		monster->setMaxLifeValue(monsterData->getLifeValue());
 		monster->setLifeValue(monsterData->getCurLifeValue());
 		monster->setGold(monsterData->getGold());
 		monster->setSpeed(monsterData->getSpeed());
-		monster->setPointPath(_pathPoints); // ´«µİÂ·¾¶¸ø¹ÖÎï
+		monster->setPointPath(_pathPoints); // ä¼ é€’è·¯å¾„ç»™æ€ªç‰©
 		monster->setName(monsterData->getName());
 		monster->setPosition(monsterData->getposition());
 		monster->setStep(monsterData->getStep());
@@ -1544,7 +1524,6 @@ void GameScene::beganSaveGame()
 	for (auto monster : _currentMonsters) {
 		monster->startMoving();
 	}
-	// Éú³ÉÕâ²¨Ã»Éú³ÉÍêµÄ¹ÖÎï
+	// ç”Ÿæˆè¿™æ³¢æ²¡ç”Ÿæˆå®Œçš„æ€ªç‰©
 	generateMonsterWave();
 }
-
